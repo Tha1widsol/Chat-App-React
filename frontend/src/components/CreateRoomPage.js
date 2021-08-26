@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,useState } from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -13,31 +13,43 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 export default function CreateRoomPage() {
   let defaultVotes = 2;
 
-     const [state,setState]  = React.useState({
+     const [state,setState] = useState({
       guestCanPause: true,
       votesToSkip: defaultVotes,
     });
 
+
   function handleVotesChange(e) {
-    setState({
-    guestCanPause: true,
-    
+    setState(prevState => {
+      return {...prevState,votesToSkip: parseInt(e.target.value)}
+
     });
   
   }
 
   function handleGuestCanPauseChange(e) {
-    setState({
-      guestCanPause: e.target.value === "true" ? true : false,
-      
+    setState(prevState => {
+      return {...prevState,guestCanPause: e.target.value === "true" ? true : false,}
     });
   }
 
   function handleRoomButtonPressed() {
-    console.log(state)
+    const requestOptions = {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        votes_to_skip: state.votesToSkip,
+        guest_can_pause: state.guestCanPause
+      }),
+    };
+    fetch('/api/create-room',requestOptions)
+    .then((response) => response.json())
+    .then((data) => console.log(data));
+   
   }
 
- 
+
+
     return (
       <Grid container spacing={1}>
         <Grid item xs={12} align="center">

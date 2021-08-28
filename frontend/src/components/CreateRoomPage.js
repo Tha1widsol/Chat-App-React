@@ -10,7 +10,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
-export default function CreateRoomPage() {
+export default function CreateRoomPage(props) {
   let defaultVotes = 2;
 
      const [state,setState] = useState({
@@ -44,7 +44,8 @@ export default function CreateRoomPage() {
     };
     fetch('/api/create-room',requestOptions)
     .then((response) => response.json())
-    .then((data) => console.log(data));
+
+    .then((data) => props.history.push('/room/' + data.code)); // Redirects to /room/+ room code/
    
   }
 

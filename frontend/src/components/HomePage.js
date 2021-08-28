@@ -3,6 +3,7 @@ import {BrowserRouter as Router,Switch,Route,Link,Redirect} from "react-router-d
 import AboutPage from './AboutPage';
 import CreateRoomPage from './CreateRoomPage';
 import RoomJoinPage from './RoomJoinPage';
+import Room from './Room';
 
 export default function HomePage(){
     return(
@@ -14,6 +15,7 @@ export default function HomePage(){
 
             <Route exact path='/join' component={RoomJoinPage}></Route>
             <Route path='/create' component={CreateRoomPage}></Route>
+            <Route path='/room/:roomCode' component={Room}></Route>
         </Switch>
     </Router>);
 }

@@ -1,11 +1,10 @@
-import React,{Component} from "React";
+import React  from "React";
 import {render} from "react-dom";
 import HomePage from "./HomePage";
-import RoomJoinPage from "./RoomJoinPage";
-import CreateRoomPage from "./CreateRoomPage";
+
 
 export default function App(){
-        return (<div>
+        return (<div className="center">
                 <HomePage/>
               
                 </div>);

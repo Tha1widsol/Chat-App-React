@@ -1,6 +1,5 @@
-import React,{Component} from 'react'
-import {BrowserRouter as Router,Switch,Route,Link,Redirect} from "react-router-dom"
-import AboutPage from './AboutPage';
+import React from 'react'
+import {BrowserRouter as Router,Switch,Route} from "react-router-dom"
 import CreateRoomPage from './CreateRoomPage';
 import RoomJoinPage from './RoomJoinPage';
 import Room from './Room';

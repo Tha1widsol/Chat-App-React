@@ -1,14 +1,9 @@
-import React, { Component,useState } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import { Link } from "react-router-dom";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import React, { useState } from "react";
+
+import {Button,Grid,Typography,TextField,FormHelperText,
+  FormControl,Radio,RadioGroup, FormControlLabel } from "@material-ui/core";
+
+import Link from "react-router-dom";
 
 export default function CreateRoomPage(props) {
   let defaultVotes = 2;
@@ -42,7 +37,7 @@ export default function CreateRoomPage(props) {
         guest_can_pause: state.guestCanPause
       }),
     };
-    fetch('/api/create-room',requestOptions)
+    fetch('/api/create-room',requestOptions) // Puts frontend information into '/api/create-room'
     .then((response) => response.json())
 
     .then((data) => props.history.push('/room/' + data.code)); // Redirects to /room/+ room code/

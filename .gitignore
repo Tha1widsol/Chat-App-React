@@ -1,0 +1,12 @@
+node_modules
+
+*.pyc
+*.db
+*.log
+*.pot
+
+*/*/*/__pycache__/
+
+*/*/__pycache__/
+
+*/__pycache__/

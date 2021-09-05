@@ -5,6 +5,8 @@ node_modules
 *.log
 *.pot
 *.sqlite3
+main.js
+main.js.LICENSE.txt
 
 */*/*/__pycache__/
 

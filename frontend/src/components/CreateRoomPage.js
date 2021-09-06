@@ -8,14 +8,14 @@ import Link from "react-router-dom";
 export default function CreateRoomPage(props) {
   let defaultVotes = 2;
 
-     const [state,setState] = useState({
+     const [rooms,setRooms] = useState({
       guestCanPause: true,
       votesToSkip: defaultVotes,
     });
 
 
   function handleVotesChange(e) {
-    setState(prevState => {
+    setRooms(prevState => {
       return {...prevState,votesToSkip: parseInt(e.target.value)}
 
     });
@@ -23,7 +23,7 @@ export default function CreateRoomPage(props) {
   }
 
   function handleGuestCanPauseChange(e) {
-    setState(prevState => {
+    setRooms(prevState => {
       return {...prevState,guestCanPause: e.target.value === "true" ? true : false,}
     });
   }
@@ -33,8 +33,8 @@ export default function CreateRoomPage(props) {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        votes_to_skip: state.votesToSkip,
-        guest_can_pause: state.guestCanPause
+        votes_to_skip: rooms.votesToSkip,
+        guest_can_pause: rooms.guestCanPause
       }),
     };
     fetch('/api/create-room',requestOptions) // Puts frontend information into '/api/create-room'
@@ -56,7 +56,7 @@ export default function CreateRoomPage(props) {
         <Grid item xs={12} align="center">
           <FormControl component="fieldset">
             <FormHelperText>
-              <div align="center">Guest Control of Playback State</div>
+              <div align="center">Guest Control of Playback rooms</div>
             </FormHelperText>
             <RadioGroup
               row

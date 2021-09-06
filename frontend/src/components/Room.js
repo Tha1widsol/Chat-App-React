@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function Room(props){
-    const [state,setState] = useState({
+    const [rooms,setRooms] = useState({
         votesToSkip: 2,
         guestCanPause: false,
         isHost: false,
@@ -16,7 +16,7 @@ export default function Room(props){
         response.json()
 
        ).then((data) => {
-        setState({
+        setRooms({
            votesToSkip: data.votes_to_skip,
            guestCanPause: data.guest_can_pause,
            isHost: data.is_host,
@@ -27,9 +27,9 @@ export default function Room(props){
     return (
         <>
           <h3>{roomCode}</h3>
-           <p>Votes: {state.votesToSkip}</p>
-           <p>Guest Can Pause:{state.guestCanPause.toString()}</p>
-           <p>Host:{state.isHost.toString()}</p>
+           <p>Votes: {rooms.votesToSkip}</p>
+           <p>Guest Can Pause:{rooms.guestCanPause.toString()}</p>
+           <p>Host:{rooms.isHost.toString()}</p>
         </>
     );
 }

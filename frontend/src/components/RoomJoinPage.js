@@ -4,13 +4,13 @@ import { TextField,Button,Grid,Typography } from '@material-ui/core';
 
 export default function RoomJoinPage(props){
 
-    const [state,setState] = useState({
+    const [rooms,setRooms] = useState({
         roomCode: "",
         error:""
     })
 
     function handleTextFieldChange(e){
-        setState(prevState => {
+        setRooms(prevState => {
             return {...prevState, roomCode: e.target.value}
         })
     }
@@ -20,17 +20,17 @@ export default function RoomJoinPage(props){
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body : JSON.stringify({
-                code: state.roomCode
+                code: rooms.roomCode
             })
         };
 
         fetch('/api/join-room',requestOptions).then((response) => {
             if (response.ok) {
-                props.history.push("/room/" + state.roomCode)
+                props.history.push("/room/" + rooms.roomCode)
             }
 
             else{
-                setState(prevState => {
+                setRooms(prevState => {
                     return {...prevState,error:"Room not found"}
                 })
             }
@@ -51,11 +51,11 @@ export default function RoomJoinPage(props){
 
             <Grid item xs={12}>
                 <TextField
-                error = {state.error}
+                error = {rooms.error}
                 label = "Code"
                 placeholder="Enter a Room Code"
-                value = {state.roomCode}
-                helperText = {state.error}
+                value = {rooms.roomCode}
+                helperText = {rooms.error}
                 variant = "outlined"
                 onChange = {handleTextFieldChange}
                 />

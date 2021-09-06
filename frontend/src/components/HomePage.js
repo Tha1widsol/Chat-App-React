@@ -56,10 +56,7 @@ export default function HomePage(){
                 return rooms.roomCode ? (<Redirect to={'/room/' + rooms.roomCode}/>) : renderHomePage() // If theres a room code then redirect to  '/room/' + rooms.roomCode. Else just call renderHomePage
             }}/>
         
-          <Route exact path="/join" render = {() => {
-                return rooms.roomCode ? (<Redirect to={'/room/' + rooms.roomCode}/>) : RoomJoinPage // If theres a room code then redirect to  '/room/' + rooms.roomCode. Else just call renderHomePage
-            }}/>
-            
+            <Route path='/join' component={RoomJoinPage}></Route>
 
             <Route path='/create' component={CreateRoomPage}></Route>
             <Route path='/room/:roomCode' component={Room}></Route>

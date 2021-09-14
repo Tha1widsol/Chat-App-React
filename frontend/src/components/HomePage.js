@@ -6,7 +6,9 @@ export default function HomePage(){
     function renderHomePage(){
 
         return (
-            <h1>Chat App</h1>
+            <div onClick={() => console.log("hello")}  style={{cursor:'pointer'}}>
+                <h1>Chat App</h1>
+            </div>
         );
     }
 

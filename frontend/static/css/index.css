@@ -24,3 +24,10 @@ html,body{
     left: 50%;
     transform: translate(-50%,-50%);
 }
+
+input{
+    height:25px;
+    border-width: 1px;
+    border-style: groove;
+}
+

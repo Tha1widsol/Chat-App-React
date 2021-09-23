@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
 from .serializers import UserSerializer,RegisterSerializer,LoginSerializer
 
 
@@ -36,3 +38,8 @@ class LoginAPI(generics.GenericAPIView):
         return Response(serializer.data)
 
 
+class Logout(APIView):
+    def get(self, request, format=None):
+        logout(request)
+        data = {'success': 'Sucessfully logged out'}
+        return Response(data=data, status=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
 import React,{useState,useEffect,useRef} from 'react'
+import axios from 'axios';
 
 export default function RegisterPage() {
     const UsernameRef = useRef()
@@ -10,12 +11,42 @@ export default function RegisterPage() {
         const password = PasswordRef.current.value
         const Confirmpassword = ConfirmPasswordRef.current.value
 
+        if (password != Confirmpassword) return
+
+
+        const requestOptions = {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+        };
+
+        fetch('/api/auth/register',requestOptions)
+        .then(response => {
+            if(!response.ok){
+                throw Error("Error")
+            
+            }
+            return response.json()
+        })
+
+        .then((data) => console.log(data))
+        
+        .catch(error => {
+            console.log(error.message)
+        })
+
         console.log(username)
         console.log(password)
         console.log(Confirmpassword)
 
     }
     
+    
+
+
     return (
         <div style={{textAlign:"center"}}>
             <label><p>Username:</p></label>

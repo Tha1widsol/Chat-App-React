@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from .serializers import UserSerializer,RegisterSerializer,LoginSerializer
-
+from knox.models import AuthToken
 
 # Create your views here.
 
@@ -22,9 +22,12 @@ class RegisterAPI(generics.GenericAPIView):
     def post(self,request,*args,**kwargs):
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception = True)
-        serializer.save()
-
-        return Response(serializer.data)
+        user = serializer.save()
+        return Response({
+            "user":UserSerializer(user,
+        context = self.get_serializer_context()).data,
+        "token": AuthToken.objects.create(user)[1]
+        })
 
 
 class LoginAPI(generics.GenericAPIView):
@@ -33,13 +36,10 @@ class LoginAPI(generics.GenericAPIView):
     def post(self,request,*args,**kwargs):
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception = True)
-        serializer.validate
+        user = serializer.validated_data
 
-        return Response(serializer.data)
-
-
-class Logout(APIView):
-    def get(self, request, format=None):
-        logout(request)
-        data = {'success': 'Sucessfully logged out'}
-        return Response(data=data, status=status.HTTP_200_OK)
+        return Response({
+            "user":UserSerializer(user,
+        context = self.get_serializer_context()).data,
+        "token": AuthToken.objects.create(user)[1]
+        })

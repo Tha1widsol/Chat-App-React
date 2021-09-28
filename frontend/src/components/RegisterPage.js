@@ -6,6 +6,8 @@ export default function RegisterPage() {
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
+    const [username,setUsername] = useState("")
+
     function HandleSubmit(e){
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
@@ -32,7 +34,7 @@ export default function RegisterPage() {
             return response.json()
         })
 
-        .then((data) => console.log(data))
+        .then((data) => console.log(data.token))
         
         .catch(error => {
             console.log(error.message)
@@ -42,6 +44,8 @@ export default function RegisterPage() {
         console.log(password)
         console.log(Confirmpassword)
 
+        setUsername(username)
+
     }
     
     
@@ -49,6 +53,7 @@ export default function RegisterPage() {
 
     return (
         <div style={{textAlign:"center"}}>
+            <p>{username}</p>
             <label><p>Username:</p></label>
             <input type='text' ref={UsernameRef} placeholder='Username...'/>
         

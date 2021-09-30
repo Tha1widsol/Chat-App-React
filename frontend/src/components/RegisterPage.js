@@ -1,20 +1,29 @@
 import React,{useState,useEffect,useRef} from 'react'
-import axios from 'axios';
+import { useHistory } from "react-router-dom";
+import Messages from './Messages';
 
 export default function RegisterPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
-    const [username,setUsername] = useState("")
+    const [messages,setMessages] = useState([])
+
+    let history = useHistory();
 
     function HandleSubmit(e){
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
         const Confirmpassword = ConfirmPasswordRef.current.value
 
-        if (password != Confirmpassword) return
+        const notMatchingPasswords = "Passwords don't match"
 
+        if (password !== Confirmpassword) {
+            setMessages(prevState => {
+                return [...prevState,{text:notMatchingPasswords,type:"error"}]
+            })
+            return  
+        }
 
         const requestOptions = {
             method:'POST',
@@ -34,29 +43,28 @@ export default function RegisterPage() {
             return response.json()
         })
 
-        .then((data) => console.log(data.token))
+        .then(data => {
+            localStorage.setItem('token',data.token)
+            history.push('/')
+            window.location.reload(false);
+        })
         
         .catch(error => {
             console.log(error.message)
         })
 
-        console.log(username)
-        console.log(password)
-        console.log(Confirmpassword)
-
-        setUsername(username)
+      
 
     }
     
-    
-
 
     return (
-        <div style={{textAlign:"center"}}>
-            <p>{username}</p>
+    
+        <div>
+            <Messages messages = {messages} />
+
             <label><p>Username:</p></label>
             <input type='text' ref={UsernameRef} placeholder='Username...'/>
-        
             <label><p>Password:</p></label>
             <input type='password' ref={PasswordRef} placeholder='Password...'/>
         

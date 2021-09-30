@@ -1,30 +1,12 @@
 import React,{useState,useEffect,useRef} from 'react'
+import { useHistory } from "react-router-dom";
 
 export default function LoginPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
 
-    const [user,setUser] = useState({
-        logged_in: localStorage.getItem('token') ? true : false,
-        username: ""
-    })
+    let history = useHistory();
 
-    useEffect(() => {
-        if(user.logged_in){
-            fetch('/api/current_user',{
-                headers: {
-                    Authorization:`Token ${localStorage.getItem('token')}`
-                }
-            })
-
-            .then(response => response.json())
-            .then(data => {
-                setUser({username:data.username,logged_in:true})
-                console.log(data)
-            })
-        }
-       
-     },[])
     function HandleSubmit(e){
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
@@ -49,8 +31,8 @@ export default function LoginPage() {
     
             .then(data => {
                 localStorage.setItem('token',data.token)
-                setUser({logged_in:true, username: username})
-              
+                history.push('/')
+                window.location.reload(false);
             })
             
             .catch(error => {
@@ -58,16 +40,9 @@ export default function LoginPage() {
             })
     }
 
-    function handleLogout(){
-        localStorage.removeItem('token');
-        setUser({ logged_in: false, username: '' });
-    }
-   
-    
     return (
-    <div style={{textAlign:"center"}}>
-        {user.logged_in ? <button onClick={handleLogout}>Logout</button>: null}
-        <p>{user.username} </p>
+    <div>
+    
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>
     

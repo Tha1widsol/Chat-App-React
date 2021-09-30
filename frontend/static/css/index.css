@@ -20,6 +20,7 @@ html,body{
 
 .center {
     position: absolute;
+    text-align: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
@@ -31,3 +32,10 @@ input{
     border-style: groove;
 }
 
+.error{
+    color:red
+}
+
+.success{
+    color:green
+}

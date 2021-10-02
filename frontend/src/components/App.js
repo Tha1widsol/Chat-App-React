@@ -20,10 +20,19 @@ export default function App(){
         
                     .then(response => response.json())
                     .then(data => {
-                        setUser({username:data.username,logged_in:true})
-                        console.log(data)
+
+                        if (data.username){
+                            setUser({username:data.username,logged_in:true})
+                            console.log(data)
+                        }
+
+                        else{
+                            setUser({ logged_in: false, username: '' });
+                        }
+                      
                     })
                 }
+                
                
              },[])
 

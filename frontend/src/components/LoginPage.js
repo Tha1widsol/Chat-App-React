@@ -1,16 +1,29 @@
 import React,{useState,useEffect,useRef} from 'react'
 import { useHistory } from "react-router-dom";
+import Messages from './Messages';
 
 export default function LoginPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
 
+    const [errors,setErrors] = useState([])
+
     let history = useHistory();
 
     function HandleSubmit(e){
+
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
 
+        
+        if(username.length == 0|| password.length == 0){
+            
+            setMessages(
+                {text:"Fields cannot be empty",type:"error"}
+             )
+             return 
+             
+        }
         const requestOptions = {
             method:'POST',
             headers:{'Content-Type':'application/json'},
@@ -23,7 +36,8 @@ export default function LoginPage() {
             fetch('/api/auth/login',requestOptions)
             .then(response => {
                 if(!response.ok){
-                    throw Error("Error")
+                    throw Error('Username or password is incorrect')
+
                 
                 }
                 return response.json()
@@ -36,13 +50,17 @@ export default function LoginPage() {
             })
             
             .catch(error => {
-                console.log(error.message)
+                PasswordRef.current.value = null
+
+                setErrors(
+                   [error.message]
+                )
             })
     }
 
     return (
     <div>
-    
+       <Messages messages = {errors} />
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>
     

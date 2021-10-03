@@ -7,24 +7,58 @@ export default function RegisterPage() {
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
-    const [messages,setMessages] = useState([])
+    const [errors,setErrors] = useState([])
 
     let history = useHistory();
+    
 
-    function HandleSubmit(e){
-        const username = UsernameRef.current.value
-        const password = PasswordRef.current.value
+   const validateForm = (username,password) => {
+        let errors = []
+        let isValid = true
+
         const Confirmpassword = ConfirmPasswordRef.current.value
 
-        const notMatchingPasswords = "Passwords don't match"
-
-        if (password !== Confirmpassword) {
-            setMessages(prevState => {
-                return [...prevState,{text:notMatchingPasswords,type:"error"}]
-            })
-            return  
+        
+        if(username.length == 0|| password.length == 0 || Confirmpassword.length == 0){
+            errors.push("Fields cannot be empty")
+            isValid = false
+             
         }
 
+        if (username.length < 9){
+            errors.push("Username must be atleast 9 characters long")
+            isValid = false
+       
+            
+        }
+
+        if (password != Confirmpassword){
+            errors.push("Passwords must match")
+            isValid = false
+          
+
+        }
+
+        if (!isValid){
+            setErrors(errors)
+            return
+            
+        }
+
+        return isValid
+    }
+
+
+    function HandleSubmit(e){
+        
+        const username = UsernameRef.current.value
+        const password = PasswordRef.current.value
+        
+
+        const UserExists = 'Username is already taken'
+
+        if(!validateForm(username,password)) return
+        
         const requestOptions = {
             method:'POST',
             headers:{'Content-Type':'application/json'},
@@ -37,34 +71,40 @@ export default function RegisterPage() {
         fetch('/api/auth/register',requestOptions)
         .then(response => {
             if(!response.ok){
-                throw Error("Error")
-            
+                throw Error(UserExists)
             }
             return response.json()
         })
 
         .then(data => {
-            localStorage.setItem('token',data.token)
-            history.push('/')
-            window.location.reload(false);
+
+        localStorage.setItem('token',data.token)
+        history.push('/')
+        window.location.reload(false);
+            
+    
+    
+      
         })
         
         .catch(error => {
-            console.log(error.message)
+            setErrors([error.message])
+
         })
 
-      
 
     }
-    
+
 
     return (
     
         <div>
-            <Messages messages = {messages} />
+            
+         <Messages messages = {errors} />
 
             <label><p>Username:</p></label>
             <input type='text' ref={UsernameRef} placeholder='Username...'/>
+          
             <label><p>Password:</p></label>
             <input type='password' ref={PasswordRef} placeholder='Password...'/>
         

@@ -1,11 +1,6 @@
-import React,{useState,useEffect} from 'react'
-import {BrowserRouter as Router,Switch,Route,Link,Redirect} from "react-router-dom"
-import RegisterPage from './RegisterPage';
-import LoginPage from './LoginPage';
+import React from 'react'
 
 export default function HomePage(){
-
-    function renderHomePage(){
 
         return (
             <div style={{textAlign:"center"}}>
@@ -19,13 +14,5 @@ export default function HomePage(){
         );
     }
 
-    return (
-    <Router>
-        <Switch>
-            <Route exact path='/' component={renderHomePage}></Route>
-            <Route path='/register' component={RegisterPage}></Route>
-            <Route path='/sign_in' component={LoginPage}></Route>
-        
-        </Switch>
-    </Router>);
-}
+
+

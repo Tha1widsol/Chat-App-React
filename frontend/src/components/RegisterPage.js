@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useRef} from 'react'
+import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Messages from './Messages';
 
@@ -15,25 +15,46 @@ export default function RegisterPage() {
    const validateForm = (username,password) => {
         let errors = []
         let isValid = true
+        const numbers = /[0-9]/g
+        const symbols = /[!£$%^&*()]/g
+        const upper = /[A-Z]/g
 
         const Confirmpassword = ConfirmPasswordRef.current.value
 
         
         if(username.length == 0|| password.length == 0 || Confirmpassword.length == 0){
-            errors.push("Fields cannot be empty")
+            errors.push('Fields cannot be empty')
             isValid = false
              
         }
 
         if (username.length < 9){
-            errors.push("Username must be atleast 9 characters long")
+            errors.push('Username must be atleast 9 characters long')
             isValid = false
-       
-            
         }
 
-        if (password != Confirmpassword){
-            errors.push("Passwords must match")
+        if (password.length < 9){
+            errors.push('Password must be atleast 9 characters long')
+            isValid = false
+        }
+
+        if(!password.match(numbers)){
+            errors.push('Password must contain atleast one number')
+            isValid = false
+        }
+
+        if(!password.match(symbols)){
+            errors.push('Password must contain atleast one symbol')
+            isValid = false
+        }
+
+        if(!password.match(upper)){
+            errors.push('Password must contain atleast one uppercase')
+            isValid = false
+        }
+
+        if (password !== Confirmpassword){
+            errors.push('Passwords must match')
             isValid = false
           
 
@@ -101,6 +122,13 @@ export default function RegisterPage() {
         <div>
             
          <Messages messages = {errors} />
+
+        <p>Password must contain:</p>
+         <li> Atleast 9 characters </li>
+         <li> Atleast one number</li>
+         <li> Atleast one capital</li>
+         <li> Atleast one of these symbols: !,£,$,%,^,&,*,(,) </li>
+
 
             <label><p>Username:</p></label>
             <input type='text' ref={UsernameRef} placeholder='Username...'/>

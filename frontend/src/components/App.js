@@ -1,6 +1,7 @@
-import React,{useState,useEffect,useRef}  from "react";
+import React,{useState,useEffect}  from "react";
 import {render} from "react-dom";
-import HomePage from "./HomePage";
+import Navbar from "./Navbar";
+import Routes from "./Routes";
 
 
 export default function App(){
@@ -27,7 +28,7 @@ export default function App(){
                         }
 
                         else{
-                            setUser({ logged_in: false, username: '' });
+                            handleLogout()
                         }
                       
                     })
@@ -41,14 +42,20 @@ export default function App(){
                 setUser({ logged_in: false, username: '' });
             }
            
-        
-        
-        return (<div className="center">
-                 {user.logged_in ? <button onClick={handleLogout}>Logout</button>: null}
-                 {user.logged_in ? <p>Logged in as, {user.username} </p> : null} 
-                <HomePage/>
-                </div>);
+        return (
+
+            <div>
+               <Navbar user = {user} handleLogout = {handleLogout}/>
+               
+                <div className="center"><Routes/></div>
+                        
+            </div>
+            
+            );
+
+            
 }
 
 const appDiv = document.getElementById("app");
 render(<App/>, appDiv);
+

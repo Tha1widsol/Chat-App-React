@@ -3,9 +3,9 @@ import React from 'react'
 export default function Messages({messages}) {
 
     return (
-        messages.map(message =>  {
+        messages.arr.map(message =>  {
             return (
-                <div className = "error"> 
+                <div className = {messages.type}> 
                   <p>  <li>{message} </li></p>
                 </div>
                 )

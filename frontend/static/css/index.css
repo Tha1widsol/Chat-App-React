@@ -66,3 +66,9 @@ input{
 .success{
     color:green
 }
+
+.container{
+    width: 700px;
+    height:auto;
+    border-style: groove;
+}

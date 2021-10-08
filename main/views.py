@@ -25,7 +25,7 @@ def currentUser(request):
 class SearchAPI(APIView):
     def post(self,request,*args,**kwargs):
         #serializer = self.get_serializer(data = request.data)
-        search_val = request.data.get('search_string',"ds")
+        search_val = request.data.get('search_string','')
         users = User.objects.filter(username__contains = search_val)
         serializer_class = UserSerializer(users,many=True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)

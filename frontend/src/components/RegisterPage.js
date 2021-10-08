@@ -7,11 +7,10 @@ export default function RegisterPage() {
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
-    const [errors,setErrors] = useState([])
+    const [messages,setMessages] = useState({arr:[],type:''})
 
     let history = useHistory();
     
-
    const validateForm = (username,password) => {
         let errors = []
         let isValid = true
@@ -22,7 +21,7 @@ export default function RegisterPage() {
         const Confirmpassword = ConfirmPasswordRef.current.value
 
         
-        if(username.length == 0|| password.length == 0 || Confirmpassword.length == 0){
+        if(username.length == 0 || password.length == 0 || Confirmpassword.length == 0){
             errors.push('Fields cannot be empty')
             isValid = false
              
@@ -61,7 +60,7 @@ export default function RegisterPage() {
         }
 
         if (!isValid){
-            setErrors(errors)
+            setMessages({arr:errors,type:'error'})
             return
             
         }
@@ -103,16 +102,12 @@ export default function RegisterPage() {
         history.push('/')
         window.location.reload(false);
             
-    
-    
-      
         })
         
         .catch(error => {
-            setErrors([error.message])
+            setMessages({arr:[error.message],type:'error'})
 
         })
-
 
     }
 
@@ -121,7 +116,7 @@ export default function RegisterPage() {
     
         <div>
             
-         <Messages messages = {errors} />
+         <Messages messages = {messages} />
 
         <p>Password must contain:</p>
          <li> Atleast 9 characters </li>

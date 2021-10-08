@@ -6,7 +6,7 @@ export default function LoginPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
 
-    const [errors,setErrors] = useState([])
+    const [messages,setMessages] = useState({arr:[],type:''})
 
     let history = useHistory();
 
@@ -16,10 +16,10 @@ export default function LoginPage() {
         const password = PasswordRef.current.value
 
         
-        if(username.length == 0|| password.length == 0){
+        if(username.length == 0 || password.length == 0){
             
             setMessages(
-                {text:"Fields cannot be empty",type:"error"}
+                {arr:["Fields cannot be empty"],type:"error"}
              )
              return 
              
@@ -52,15 +52,15 @@ export default function LoginPage() {
             .catch(error => {
                 PasswordRef.current.value = null
 
-                setErrors(
-                   [error.message]
+                setMessages(
+                  {arr:[error.message],type:'error'} 
                 )
             })
     }
 
     return (
     <div>
-       <Messages messages = {errors} />
+       <Messages messages = {messages} />
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>
     

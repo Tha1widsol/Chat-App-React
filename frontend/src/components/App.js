@@ -3,7 +3,6 @@ import {render} from "react-dom";
 import Navbar from "./Navbar";
 import Routes from "./Routes";
 
-
 export default function App(){
 
         const [user,setUser] = useState({
@@ -25,13 +24,18 @@ export default function App(){
                         if (data.username){
                             setUser({username:data.username,logged_in:true})
                             console.log(data)
+                            
                         }
 
                         else{
                             handleLogout()
                         }
+
+                    
                       
                     })
+
+                  
                 }
                 
                
@@ -47,7 +51,7 @@ export default function App(){
             <div>
                <Navbar user = {user} handleLogout = {handleLogout}/>
                
-                <div className="center"><Routes/></div>
+                <div className="center"><Routes user = {user}/></div>
                         
             </div>
             

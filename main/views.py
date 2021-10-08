@@ -22,6 +22,15 @@ def currentUser(request):
     return Response(serializer.data)
     
 
+class SearchAPI(APIView):
+    def post(self,request,*args,**kwargs):
+        #serializer = self.get_serializer(data = request.data)
+        search_val = request.data.get('search_string',"ds")
+        users = User.objects.filter(username__contains = search_val)
+        serializer_class = UserSerializer(users,many=True)
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
+        
+
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 

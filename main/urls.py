@@ -6,6 +6,7 @@ urlpatterns = [
 path('users',views.UserViewSet,name = "users"),
 path('current_user',views.currentUser,name="user"),
 path('search',views.SearchAPI.as_view(),name="search"),
+path('add',views.AddAPI.as_view(),name="added"),
 path('auth/register',views.RegisterAPI.as_view()),
 path('auth/login',views.LoginAPI.as_view()),
 path('auth/logout',knox_views.LogoutView.as_view(),name='knox_logout')

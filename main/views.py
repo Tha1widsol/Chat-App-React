@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, logout,login
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from .serializers import UserSerializer,RegisterSerializer,LoginSerializer
+from .serializers import *
 from knox.models import AuthToken
+from .models import Add
 
 # Create your views here.
 
@@ -29,7 +30,23 @@ class SearchAPI(APIView):
         users = User.objects.filter(username__contains = search_val)
         serializer_class = UserSerializer(users,many=True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)
+
+class AddAPI(APIView):
+    serializer_class = AddedSerializer
+
+    def post(self,request,*args,**kwargs):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            user = request.user
+            id = request.data.get('friends')
+            friend = User.objects.get(id = id)
+            add = Add(user = user,friend = friend)
+            add.save()
+          
+            return Response(AddedSerializer(add).data, status=status.HTTP_201_CREATED)
         
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

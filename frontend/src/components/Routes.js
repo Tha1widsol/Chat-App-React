@@ -11,7 +11,7 @@ export default function Routes({user}) {
             <Router>
                 <Switch>
                 <Route exact path={["/","/home"]} render = {() => {
-                        return user.logged_in ? (<UserPage user = {user}/>) : HomePage()
+                        return user.logged_in ? (<UserPage logged_in_user = {user}/>) : HomePage()
                     }}/>
                     <Route path='/register' component={RegisterPage}></Route>
                     <Route path='/sign_in' render={() => <LoginPage/>} />

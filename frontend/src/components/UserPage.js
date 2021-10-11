@@ -2,7 +2,7 @@ import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Messages from './Messages';
 
-export default function UserPage({user}) {
+export default function UserPage({logged_in_user}) {
     const SearchRef = useRef()
 
     let history = useHistory()
@@ -10,6 +10,27 @@ export default function UserPage({user}) {
     const [messages,setMessages] = useState({arr:[],type:''})
 
     const [users,setUsers] = useState([])
+
+    const searchedUsers = () => {
+        return users.filter(user => user.username !== logged_in_user.username)
+    }
+
+    function HandleAddFriend(id){
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
+            body : JSON.stringify({
+                friends: id
+            })
+        };
+
+        fetch('/api/add',requestOptions)
+        .then((response) => response.json())
+        .then(data => {
+            console.log(data)
+        })
+
+    }
 
     function HandleSubmitSearch(e){
         e.preventDefault()
@@ -40,7 +61,7 @@ export default function UserPage({user}) {
     return (
         <div className = 'container'>
             <Messages messages = {messages} />
-            <h2>{user.username} </h2> 
+            <h2>{logged_in_user.username} </h2> 
             <form action="#" method="post">
                     <input type="search" ref={SearchRef} placeholder="Search..." id="search" autofocus = "autofocus" name="search_string" aria-label="Search" />   
                     <button onClick={HandleSubmitSearch}>Submit</button>
@@ -49,10 +70,10 @@ export default function UserPage({user}) {
     <br/>
 
 
-    {users.map(user => {
+    {searchedUsers().map(user => {
           return (
               <div className = 'container'>
-                <p> {user.id}. {user.username}</p>
+                <p> {user.id}. {user.username}</p> <span><button onClick = {() => HandleAddFriend(user.id)}>Add friend</button></span>
               </div>
           )
       })}

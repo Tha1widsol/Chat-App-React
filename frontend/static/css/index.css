@@ -26,19 +26,25 @@ html,body{
     transform: translate(-50%,-50%);
 }
 
-#navbar{
-    position:fixed;
+#navbar,#user-nav{
     top:0;
-    background-color: lightblue;
     width:100%;
     z-index:1
 }
 
-#navbar a {
+#navbar{
+    position:fixed;
+    background-color: lightblue;
+}
+
+
+#user-nav a:hover{
+    background-color: lightgray;
+}
+
+
+#navbar a,#user-nav a {
     position: relative;
-    float: left;
-    display: block;
-    text-align: center;
     padding: 14px 16px;
     color: 'black';
     text-decoration: none;
@@ -47,6 +53,12 @@ html,body{
     margin:auto;
     border-bottom: 3px solid transparent;
     }
+
+#navbar a{
+    float: left;
+    display:block;
+}
+
 
 a{color:black;}
 
@@ -67,8 +79,12 @@ input{
     color:green
 }
 
-.container{
-    width: 700px;
+.container,#user-container{
     height:auto;
     border-style: groove;
+}
+
+#user-container{
+    min-width: 1000px;
+    min-height: 450px;
 }

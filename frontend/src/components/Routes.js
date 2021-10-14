@@ -4,19 +4,30 @@ import RegisterPage from './RegisterPage'
 import LoginPage from './LoginPage'
 import HomePage from './HomePage'
 import UserPage from './UserPage'
+import UserRoutes from './UserRoutes'
+
 
 export default function Routes({user}) {
 
     return (
+        <>
             <Router>
                 <Switch>
                 <Route exact path={["/","/home"]} render = {() => {
-                        return user.logged_in ? (<UserPage logged_in_user = {user}/>) : HomePage()
+                        return user.logged_in ? null : HomePage()
                     }}/>
                     <Route path='/register' component={RegisterPage}></Route>
                     <Route path='/sign_in' render={() => <LoginPage/>} />
                 
                 </Switch>
+            
             </Router>
+
+            { user.logged_in ? <UserRoutes logged_in_user = {user}/> :  null}
+
+    
+           
+        </>
+
     )
 }

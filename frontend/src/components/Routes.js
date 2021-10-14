@@ -3,7 +3,6 @@ import {BrowserRouter as Router,Switch,Route,Redirect} from "react-router-dom"
 import RegisterPage from './RegisterPage'
 import LoginPage from './LoginPage'
 import HomePage from './HomePage'
-import UserPage from './UserPage'
 import UserRoutes from './UserRoutes'
 
 

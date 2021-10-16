@@ -16,7 +16,7 @@ export default function Routes({user}) {
                         return user.logged_in ? null : HomePage()
                     }}/>
                     <Route path='/register' component={RegisterPage}></Route>
-                    <Route path='/sign_in' render={() => <LoginPage/>} />
+                    <Route path='/login/' render={() => <LoginPage/>} />
                 
                 </Switch>
             

@@ -9,7 +9,7 @@ export default function HomePage(){
                 <a href='/register'><button>Register</button></a>
                 <br/>
                 <br/>
-                <a href='/sign_in'><button>Login</button></a>
+                <a href='/login/'><button>Login</button></a>
             </div>
         );
     }

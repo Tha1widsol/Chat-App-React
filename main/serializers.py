@@ -32,5 +32,5 @@ class LoginSerializer(serializers.Serializer):
 
 class AddedSerializer(serializers.Serializer):
     class Meta:
-        fields = ('friends')
+        fields = ('friend')
         model = Add

@@ -6,7 +6,8 @@ export default function UserNav() {
             <div id="user-nav">
                 <a href='/'>Chat</a>
                 <a href='/search'>Search</a>
-                <a href='/'>Requests</a>
+                <a href='/requests'>Requests</a>
+                <a href='/sent'>Sent</a>
             </div>
         
         </div>

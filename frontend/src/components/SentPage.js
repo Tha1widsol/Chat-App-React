@@ -1,7 +1,9 @@
 import React,{useState,useEffect} from 'react'
+import Messages from './Messages'
 
 export default function SentPage() {
     const [users,setUsers] = useState([])
+    const [messages,setMessages] = useState({arr:[],type:''})
 
     useEffect(() => {
 
@@ -28,12 +30,16 @@ export default function SentPage() {
         };
 
         fetch('/api/remove_request',requestOptions)
+
+        .then(() =>{
+            setMessages({arr:["Friend request cancelled"],type:"success"})
+        })
     }
 
     return (
         <div>
-            <h2>Sent</h2>
-
+           <Messages messages = {messages} />
+           <h2>Sent</h2>
           {users.map(user => {
             return (
             <div className = 'container'>

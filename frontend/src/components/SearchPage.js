@@ -25,11 +25,7 @@ export default function SearchPage({logged_in_user}) {
         };
 
         fetch('/api/add',requestOptions)
-        .then((response) => response.json())
-        .then(data => {
-            console.log(data)
-        })
-
+  
     }
 
     function HandleSubmitSearch(e){

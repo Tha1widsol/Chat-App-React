@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, logout,login
 from django.contrib.auth.models import User
+from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from .serializers import *
 from knox.models import AuthToken
@@ -31,6 +32,13 @@ class SearchAPI(APIView):
         serializer_class = UserSerializer(users,many=True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)
 
+class GetSentAPI(APIView):
+    def get(self,request,*args,**kwargs):
+        sent = Add.objects.filter(user = request.user)
+        serializer_class = UserSerializer((s.friend for s in sent),many=True)
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
+
+
 class AddAPI(APIView):
     serializer_class = AddedSerializer
 
@@ -47,6 +55,18 @@ class AddAPI(APIView):
         
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
+class RemoveRequest(APIView):
+    serializer_class = AddedSerializer
+
+    def post(self,request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            id = request.data.get('friend')
+            friend = User.objects.get(id = id)
+            sent = Add.objects.get(friend = friend)
+            sent.delete()
+
+        return Response(status = status.HTTP_200_OK)
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

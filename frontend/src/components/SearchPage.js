@@ -25,8 +25,15 @@ export default function SearchPage({logged_in_user}) {
         };
 
         fetch('/api/add',requestOptions)
-        .then(()=> {
-            setMessages({arr:['Friend added'],type:'success'}) 
+        .then((response)=> {
+            if(response.ok){
+                setMessages({arr:['Friend added'],type:'success'}) 
+            }
+
+            else{
+                setMessages({arr:['Friend already added'],type:'error'}) 
+            }
+           
         })
   
     }

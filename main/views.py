@@ -34,8 +34,27 @@ class SearchAPI(APIView):
 
 class GetSentAPI(APIView):
     def get(self,request,*args,**kwargs):
-        sent = Add.objects.filter(user = request.user)
-        serializer_class = UserSerializer((s.friend for s in sent),many=True)
+        sender = Add.objects.filter(user = request.user)
+       
+        serializer_class = UserSerializer((s.friend for s in sender),many=True)
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
+
+class GetRequestsAPI(APIView):
+    def get(self,request,*args,**kwargs):
+        requests = Add.objects.filter(friend = request.user)
+        
+        serializer_class = UserSerializer((r.user for r in requests),many=True)
+
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
+
+class GetFriendsAPI(APIView):
+    def get(self,request,*args,**kwargs):
+        sender = Add.objects.filter(user = request.user)
+        recievers = Add.objects.filter(friend = request.user)
+
+        if sender.exists() and recievers.exists():
+           serializer_class = UserSerializer((r.user for r in recievers),many=True)
+
         return Response(serializer_class.data,status = status.HTTP_200_OK)
 
 
@@ -48,10 +67,11 @@ class AddAPI(APIView):
             user = request.user
             id = request.data.get('friends')
             friend = User.objects.get(id = id)
-            add = Add(user = user,friend = friend)
-            add.save()
-          
-            return Response(AddedSerializer(add).data, status=status.HTTP_201_CREATED)
+            if not(Add.objects.filter(user = request.user,friend = friend)).exists():
+                add = Add(user = user,friend = friend)
+                add.save()
+            
+                return Response(AddedSerializer(add).data, status=status.HTTP_201_CREATED)
         
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 

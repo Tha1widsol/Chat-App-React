@@ -28,7 +28,7 @@ export default function RequestsPage() {
             })
         };
 
-        fetch('/api/add',requestOptions)
+        fetch('/api/added_back',requestOptions)
         .then(response => {
             if(!response.ok){
                 throw Error('User is already added')

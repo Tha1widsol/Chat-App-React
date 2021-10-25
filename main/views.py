@@ -1,11 +1,10 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+from .models import User
 from rest_framework.views import APIView
 from .serializers import *
 from knox.models import AuthToken
-from .models import Add
 
 # Create your views here.
 
@@ -29,83 +28,7 @@ class SearchAPI(APIView):
         serializer_class = UserSerializer(users,many=True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)
 
-class GetSentAPI(APIView):
-    def get(self,request,*args,**kwargs):
-        sender = Add.objects.filter(user = request.user)
-        recievers = Add.objects.filter(friend = request.user)
 
-        if sender.exists() and not(recievers.exists()):
-            serializer_class = UserSerializer((s.friend for s in sender),many=True)
-
-        return Response(serializer_class.data,status = status.HTTP_200_OK)
-
-class GetRequestsAPI(APIView):
-    def get(self,request,*args,**kwargs):
-        requests = Add.objects.filter(friend = request.user)
-        sender = Add.objects.filter(user = request.user)
-        
-        if requests.exists() and not(sender.exists()):
-           serializer_class = UserSerializer((r.friend for r in requests),many=True)
-
-        return Response(serializer_class.data,status = status.HTTP_200_OK)
-
-class GetFriendsAPI(APIView):
-    def get(self,request,*args,**kwargs):
-        sender = Add.objects.filter(user = request.user)
-        recievers = Add.objects.filter(friend = request.user)
-
-        if sender.exists() and recievers.exists():
-           serializer_class = UserSerializer((r.user for r in sender),many=True)
-
-        return Response(serializer_class.data,status = status.HTTP_200_OK)
-
-class AddedBackAPI(APIView):
-    serializer_class = AddedSerializer
-
-    def post(self,request,*args,**kwargs):
-        serializer = self.serializer_class(data = request.data)
-        if serializer.is_valid():
-            user = request.user
-            id = request.data.get('friends')
-            friend = User.objects.get(id = id)
-           
-            add = Add(user = user,friend = friend)
-            add.save()
-            
-            return Response(AddedSerializer(add).data, status=status.HTTP_201_CREATED)
-        
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AddAPI(APIView):
-    serializer_class = AddedSerializer
-
-    def post(self,request,*args,**kwargs):
-        serializer = self.serializer_class(data = request.data)
-        if serializer.is_valid():
-            user = request.user
-            id = request.data.get('friends')
-            friend = User.objects.get(id = id)
-            if not(Add.objects.filter(user = request.user,friend = friend)).exists():
-                add = Add(user = user,friend = friend)
-                add.save()
-            
-                return Response(AddedSerializer(add).data, status=status.HTTP_201_CREATED)
-        
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-
-class RemoveRequest(APIView):
-    serializer_class = AddedSerializer
-
-    def post(self,request):
-        serializer = self.serializer_class(data = request.data)
-        if serializer.is_valid():
-            id = request.data.get('friend')
-            friend = User.objects.get(id = id)
-            sent = Add.objects.get(friend = friend)
-            sent.delete()
-
-        return Response(status = status.HTTP_200_OK)
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

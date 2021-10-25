@@ -1,4 +1,7 @@
 from django.contrib import admin
-from .models import Add
+from .models import User,FriendRequest
 
-admin.site.register(Add)
+admin.site.register(User)
+admin.site.register(FriendRequest)
+
+

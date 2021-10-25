@@ -1,13 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-class Add(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    friend = models.ForeignKey(User, related_name='friend',on_delete=models.CASCADE,blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.user)
+from django.contrib.auth.models import AbstractUser
 
 
+class User(AbstractUser):
+    friends = models.ManyToManyField("User",blank=True)
 
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User,related_name='from_user',on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User,related_name='to_user',on_delete=models.CASCADE)

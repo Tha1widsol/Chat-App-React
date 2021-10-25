@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import User
 from django.contrib.auth import authenticate
-from .models import Add
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,7 +29,3 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials")
 
 
-class AddedSerializer(serializers.Serializer):
-    class Meta:
-        fields = ('friend')
-        model = Add

@@ -41,10 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'rest_framework',
-    'rest_framework.authtoken',
     'frontend.apps.FrontendConfig',
     'knox'
 ]
+
+AUTH_USER_MODEL = "main.User" 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':('knox.auth.TokenAuthentication',)

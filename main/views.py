@@ -1,7 +1,7 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import User
+from .models import FriendRequest, User
 from rest_framework.views import APIView
 from .serializers import *
 from knox.models import AuthToken
@@ -28,7 +28,43 @@ class SearchAPI(APIView):
         serializer_class = UserSerializer(users,many=True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)
 
+class SendFriendRequestAPI(APIView):
+    def post(self,request,userID,*args,**kwargs):
+        from_user = request.user
+        to_user = User.objects.get(id = userID)
+        friend_request,created = FriendRequest.objects.get_or_create(from_user = from_user,to_user = to_user)
 
+        if created:
+              return Response(status = status.HTTP_200_OK)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
+class GetFriendRequestsAPI(APIView):
+    def get(self,request,*args,**kwargs):
+        requests = FriendRequest.objects.filter(to_user = request.user)
+
+        if requests.exists():
+            serializer_class = UserSerializer((r.from_user for r in requests),many = True)
+            return Response(serializer_class.data,status =  status.HTTP_200_OK)
+
+        return Response(status = status.HTTP_200_OK)
+
+class GetSentFriendRequests(APIView):
+    def get(self,request,*args,**kwargs):
+        sent = FriendRequest.objects.filter(from_user = request.user)
+
+        if sent.exists():
+            serializer_class = UserSerializer((s.to_user for s in sent),many = True)
+            return Response(serializer_class.data,status =  status.HTTP_200_OK)
+
+        return Response(status = status.HTTP_200_OK)
+
+class RemoveSentRequestAPI(APIView):
+    def post(self,request,userID,*args,**kwargs):
+        user = User.objects.get(id = userID)
+        friend_request = FriendRequest.objects.get(to_user = user)
+        friend_request.delete()
+        return Response(status = status.HTTP_200_OK)
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

@@ -23,9 +23,6 @@ export default function RequestsPage() {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
-            body : JSON.stringify({
-                friends: id
-            })
         };
 
         fetch('/api/added_back',requestOptions)

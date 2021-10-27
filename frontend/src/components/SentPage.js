@@ -24,15 +24,20 @@ export default function SentPage() {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
-            body : JSON.stringify({
-                friend: id
-            })
         };
 
-        fetch('/api/remove_request',requestOptions)
+        fetch('/api/remove_sent/' + id,requestOptions)
 
-        .then(() =>{
-            setMessages({arr:["Friend request cancelled"],type:"success"})
+        .then((response) =>{
+            if (response.ok){
+               const newUsers = [...users]
+               let index = newUsers.findIndex(user => user.id === id)
+               newUsers.splice(index,1)
+               setUsers(newUsers)
+
+              setMessages({arr:["Friend request cancelled"],type:"success"})
+            }
+          
         })
     }
 

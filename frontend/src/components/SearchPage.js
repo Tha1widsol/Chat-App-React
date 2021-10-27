@@ -24,7 +24,7 @@ export default function SearchPage({logged_in_user}) {
             })
         };
 
-        fetch('/api/add',requestOptions)
+        fetch('api/user/'+id, requestOptions)
         .then((response)=> {
             if(response.ok){
                 setMessages({arr:['Friend added'],type:'success'}) 

@@ -19,19 +19,16 @@ export default function SearchPage({logged_in_user}) {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
-            body : JSON.stringify({
-                friends: id
-            })
         };
 
         fetch('api/user/'+id, requestOptions)
         .then((response)=> {
             if(response.ok){
-                setMessages({arr:['Friend added'],type:'success'}) 
+                setMessages({arr:['Friend request sent'],type:'success'}) 
             }
 
             else{
-                setMessages({arr:['Friend already added'],type:'error'}) 
+                setMessages({arr:['Friend request already sent'],type:'error'}) 
             }
            
         })

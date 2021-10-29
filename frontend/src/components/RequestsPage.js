@@ -25,9 +25,10 @@ export default function RequestsPage() {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
         };
 
-        fetch('/api/added_back',requestOptions)
+        fetch('/api/accept_friend/' + id ,requestOptions)
         .then(response => {
             if(!response.ok){
+                console.log(response)
                 throw Error('User is already added')
             }
             return response.json()

@@ -11,7 +11,7 @@ export default function ChatPage() {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
 
-        fetch('/api/friends',requestOptions).then((response) => 
+        fetch('/api/get_friends',requestOptions).then((response) => 
         response.json()
 
        ).then((data) => {

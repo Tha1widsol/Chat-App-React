@@ -5,6 +5,8 @@ import UserNav from './UserNav'
 import ChatPage from './ChatPage'
 import RequestsPage from './RequestsPage'
 import SentPage from './SentPage'
+import ChatRoom from './ChatRoom'
+
 
 export default function UserRoutes({logged_in_user}) {
     return (
@@ -21,6 +23,7 @@ export default function UserRoutes({logged_in_user}) {
                         <Route path='/search' render={() => <SearchPage logged_in_user = {logged_in_user}/>} />
                         <Route exact path='/requests' render ={() => <RequestsPage/>} />
                         <Route exact path='/sent' render ={() => <SentPage/>} />
+                        <Route path = '/chat/:username/' component = {ChatRoom}/>
 
                     
                     </Switch>

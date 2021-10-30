@@ -31,7 +31,7 @@ export default function RequestsPage() {
                 console.log(response)
                 throw Error('User is already added')
             }
-            return response.json()
+          
         })
 
         .then(()=> {

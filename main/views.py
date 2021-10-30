@@ -1,7 +1,6 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
 from .models import FriendRequest, User
 from rest_framework.views import APIView
 from .serializers import *
@@ -84,12 +83,32 @@ class GetFriendsAPI(APIView):
             
         return Response(status = status.HTTP_200_OK)
 
+class GetChatAPI(APIView):
+    def get(self,request,username,*args,**kwargs):
+        user = User.objects.get(username = username)
+
+        if  user and user in request.user.friends.all() and request.user in user.friends.all():
+             return Response(status = status.HTTP_200_OK)
+            
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
 class RemoveSentRequestAPI(APIView):
     def post(self,request,userID,*args,**kwargs):
         user = User.objects.get(id = userID)
         friend_request = FriendRequest.objects.get(to_user = user)
         friend_request.delete()
         return Response(status = status.HTTP_200_OK)
+
+class RemoveFriendAPI(APIView):
+    def post(self,request,userID,*args,**kwargs):
+        user = User.objects.get(id = userID)
+        if user:
+           request.user.friends.remove(user)
+           user.friends.remove(request.user)
+           return Response(status = status.HTTP_200_OK)
+
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer

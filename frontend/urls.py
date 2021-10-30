@@ -9,5 +9,6 @@ urlpatterns = [
  path('login/',index),
  path('search',index),
  path('requests',index),
- path('sent',index)
+ path('sent',index),
+ path('chat/<str:username>',index)
 ]

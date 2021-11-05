@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "proxy":"http://localhost:3000",
   "scripts": {
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "devStart": "nodemon index.js"
+    "devStart": "nodemon server.js"
   },
   "keywords": [],
   "author": "",

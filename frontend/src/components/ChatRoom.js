@@ -1,48 +1,59 @@
 import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
-import { useHistory } from "react-router-dom";
+import { useHistory,useParams } from "react-router-dom";
 
-export default function ChatRoom(props) {
-    const username = props.match.params.username
 
-   
-   const [yourID,setYourID] = useState();
-   const [messages,setMessages] = useState([])
-   const [message,setMessage] = useState("")
+const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
-   const socketRef = useRef()
+socket.on('user-connected',name => {
+    console.log(name + ' joined')
+})
 
-	useEffect (() => {
-		socketRef.current = io.connect("/");
-        socketRef.current.on("your id", id => {
-            setYourID(id)
+socket.on('user-disconnected',name => {
+    console.log(name + ' disconnected')
+})
+
+
+export default function ChatRoom({logged_in_user}) {
+    const {username} = useParams()
+
+    const [messages,setMessages] = useState([])
+    const[TypingMessage,setTypingMessage] = useState('')
+
+    const MessageRef = useRef()
+
+    socket.emit('new-user',logged_in_user.username)
+        
+    useEffect (() => {
+        socket.on('chat-message',data => {
+            setMessages(prevState => {
+                return [...prevState, `${data.name}: ${data.message}`]
+            })
         })
-        socketRef.current.on("message",(message) => {
-            recievedMessage(message)
-        })
-    })
 
-    function recievedMessage(message){
-        setMessages(oldMsgs => [...oldMsgs,message])
-    }
+        socket.on('typing',name => {
+            setTypingMessage(`${name} is typing...`)
+          
+                setTimeout(function(){ 
+                    setTypingMessage('')
+                }, 2000);
 
+            })
+
+
+    },[])
+    
     function sendMessage(e){
         e.preventDefault()
-        const messageObject = {
-            body:message,
-            id: yourID,
-        }
-        setMessage("")
-        socketRef.current.emit("send message",messageObject)
+        const message = MessageRef.current.value
+        setMessages(prevState => {
+            return [...prevState, `You: ${message}`]
+        })
+        socket.emit('send-chat-message',message)
+        MessageRef.current.value = null
     }
 
-   function handleChange(e){
-       setMessage(e.target.value)
-   }
-
-
     let history = useHistory()
-
 
     useEffect (() => {
         const requestOptions = {
@@ -61,6 +72,12 @@ export default function ChatRoom(props) {
 
     })
 
+    function handleTyping(){
+        socket.emit('user-typing')
+    }
+
+
+
     return (
         <div>
         
@@ -69,29 +86,21 @@ export default function ChatRoom(props) {
     
             <h1>Chat Log</h1>
 
-         {messages.map((message,index) => {
-             if(message.id === yourID){
-                    return (
-                        <div key={index}>
-                            <p>{message.body}</p>
-                        </div>
-                    )
-             }
-
-            return (
-                <div key= {index}>
-                    <p>sender: {message.body}</p>
+            {messages.map((message,index) => {
+                return (
+                <div key = {index}>
+                    <p>{message}</p>
                 </div>
-            )
-
-         })}
+                )
+              
+            })}
 
         <form onSubmit={sendMessage}>
-            <input type='text' value={message} onChange={handleChange}  placeholder='Message...'/>
+            <input type='text' ref = {MessageRef} onKeyDown= {handleTyping}  placeholder='Message...'/>
             <button>Send</button>
         </form>
-        
 
+        <p>{TypingMessage}</p>
 
         </div>
     )

@@ -2,16 +2,8 @@ import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
 import { useHistory,useParams } from "react-router-dom";
 
-
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
-socket.on('user-connected',name => {
-    console.log(name + ' joined')
-})
-
-socket.on('user-disconnected',name => {
-    console.log(name + ' disconnected')
-})
 
 
 export default function ChatRoom({logged_in_user}) {
@@ -20,14 +12,29 @@ export default function ChatRoom({logged_in_user}) {
     const [messages,setMessages] = useState([])
     const[TypingMessage,setTypingMessage] = useState('')
 
+    
     const MessageRef = useRef()
+    const RoomRef = useRef()
+
 
     socket.emit('new-user',logged_in_user.username)
+    
         
     useEffect (() => {
+        socket.on('user-connected',(name,socket) => {
+            console.log(name + ' joined ' + 'id ' + socket)
+        })
+        
+
+        
+        socket.on('user-disconnected',name => {
+            console.log(name + ' disconnected')
+        })
+        
+        
         socket.on('chat-message',data => {
             setMessages(prevState => {
-                return [...prevState, `${data.name}: ${data.message}`]
+                return [...prevState, `(${data.name} : ${data.id}): ${data.message} `]
             })
         })
 
@@ -39,6 +46,7 @@ export default function ChatRoom({logged_in_user}) {
                 }, 2000);
 
             })
+        
 
 
     },[])
@@ -46,10 +54,12 @@ export default function ChatRoom({logged_in_user}) {
     function sendMessage(e){
         e.preventDefault()
         const message = MessageRef.current.value
+        const room = RoomRef.current.value
+
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]
         })
-        socket.emit('send-chat-message',message)
+        socket.emit('send-chat-message',message,room)
         MessageRef.current.value = null
     }
 
@@ -95,8 +105,11 @@ export default function ChatRoom({logged_in_user}) {
               
             })}
 
+    
+            
         <form onSubmit={sendMessage}>
             <input type='text' ref = {MessageRef} onKeyDown= {handleTyping}  placeholder='Message...'/>
+            <input type='text' ref = {RoomRef}   placeholder='Room...'/>
             <button>Send</button>
         </form>
 

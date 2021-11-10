@@ -14,8 +14,6 @@ export default function ChatRoom({logged_in_user}) {
 
     
     const MessageRef = useRef()
-    const RoomRef = useRef()
-
 
     socket.emit('new-user',logged_in_user.username)
     
@@ -25,8 +23,8 @@ export default function ChatRoom({logged_in_user}) {
             console.log(name + ' joined ' + 'id ' + socket)
         })
         
+        socket.emit('join',username)
 
-        
         socket.on('user-disconnected',name => {
             console.log(name + ' disconnected')
         })
@@ -54,12 +52,11 @@ export default function ChatRoom({logged_in_user}) {
     function sendMessage(e){
         e.preventDefault()
         const message = MessageRef.current.value
-        const room = RoomRef.current.value
 
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]
         })
-        socket.emit('send-chat-message',message,room)
+        socket.emit('send-chat-message',message,logged_in_user.username,username)
         MessageRef.current.value = null
     }
 
@@ -80,17 +77,17 @@ export default function ChatRoom({logged_in_user}) {
 
 
 
+
     })
 
     function handleTyping(){
-        socket.emit('user-typing')
+        socket.emit('user-typing',username)
     }
 
 
 
     return (
         <div>
-        
             <h2>Chat room</h2>
             <p>{username}</p>
     
@@ -109,7 +106,6 @@ export default function ChatRoom({logged_in_user}) {
             
         <form onSubmit={sendMessage}>
             <input type='text' ref = {MessageRef} onKeyDown= {handleTyping}  placeholder='Message...'/>
-            <input type='text' ref = {RoomRef}   placeholder='Room...'/>
             <button>Send</button>
         </form>
 

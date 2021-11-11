@@ -1,10 +1,12 @@
 import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
 import { useHistory,useParams } from "react-router-dom";
+import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
 
+const users = []
 
 export default function ChatRoom({logged_in_user}) {
     const {username} = useParams()
@@ -14,22 +16,23 @@ export default function ChatRoom({logged_in_user}) {
 
     
     const MessageRef = useRef()
-
-    socket.emit('new-user',logged_in_user.username)
     
-        
+
     useEffect (() => {
+
+        socket.emit('new-user',logged_in_user.username)
+
         socket.on('user-connected',(name,socket) => {
             console.log(name + ' joined ' + 'id ' + socket)
         })
         
-        socket.emit('join',username)
-
+        socket.emit('join',{username:username})
+    
         socket.on('user-disconnected',name => {
             console.log(name + ' disconnected')
         })
-        
-        
+    
+    
         socket.on('chat-message',data => {
             setMessages(prevState => {
                 return [...prevState, `(${data.name} : ${data.id}): ${data.message} `]

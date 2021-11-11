@@ -9,8 +9,8 @@ io.on('connection',socket => {
         socket.broadcast.emit('user-connected',name,socket.id)
     })
 
-    socket.on('join',room => {
-        socket.join(room)
+    socket.on('join',data=> {
+        socket.join(data.username)
     })
 
     socket.on('send-chat-message',(message,logged_in_username,name) => {
@@ -18,8 +18,8 @@ io.on('connection',socket => {
     })
 
     socket.on('disconnect',() => {
-       socket.broadcast.emit('user-disconnected',users[socket.id])
-       delete users[socket.id] 
+       socket.broadcast.emit('user-disconnected',socket.id)
+       delete socket.id
     })
 
     socket.on('user-typing',name => { 

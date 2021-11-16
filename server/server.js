@@ -6,7 +6,6 @@ io.on('connection',socket => {
         users[name] = socket.id
         socket.broadcast.emit('user-connected',name,socket.id)
     })
-
     
     socket.on('user-typing',(name,logged_in_username) => { 
         socket.to(users[name]).emit('typing',logged_in_username)
@@ -16,9 +15,9 @@ io.on('connection',socket => {
             socket.to(users[name]).emit('chat-message',{message: message, name:logged_in_username})
     })
 
-    socket.on('disconnect',() => {
-       socket.broadcast.emit('user-disconnected',socket.id)
-       delete socket.id
+    socket.on('disconnect',name => {
+       socket.broadcast.emit('user-disconnected',name)
+       delete users[name]
     })
 
         

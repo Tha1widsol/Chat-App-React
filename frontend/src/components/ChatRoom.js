@@ -1,52 +1,55 @@
 import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
 import { useHistory,useParams } from "react-router-dom";
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
 export default function ChatRoom({logged_in_user}) {
+    let history = useHistory()
+    
     const {username} = useParams()
 
     const [messages,setMessages] = useState([])
-    const[TypingMessage,setTypingMessage] = useState('')
+    const [TypingMessage,setTypingMessage] = useState('')
 
-    
     const MessageRef = useRef()
-    
+
     socket.emit('new-user',logged_in_user.username)
 
     socket.on('user-connected',(name,socket) => {
-        console.log(name + ' joined ' + 'id ' + socket)
+        if(name == username){
+            console.log(name + ' joined ' + 'id ' + socket)
+        }
+
+        else{
+            console.log("not connected")
+        }
+       
     })
 
-
-    socket.on('user-disconnected',name => {
+    socket.on('user-disconnected',(name) => {
         console.log(name + ' disconnected')
     })
 
 
     useEffect (() => {
         socket.on('chat-message',data => {
-            if (data.name === username){
-
-                socket.on('typing',name => {
-                    setTypingMessage(`${name} is typing...`)
-                  
-                        setTimeout(function(){ 
-                            setTypingMessage('')
-                        }, 2000);
-        
-                    })
+            if (data.name !== username) return
 
                 setMessages(prevState => {
                     return [...prevState, `${data.name}: ${data.message} `]
                 })
-            }
-           
         })
 
+        socket.on('typing',name => {
+            if(name !== username) return 
 
+                setTypingMessage(`${name} is typing...`)
+                setTimeout(function(){ 
+                    setTypingMessage('')
+                }, 2000);
+
+            })
 
     },[])
     
@@ -61,8 +64,6 @@ export default function ChatRoom({logged_in_user}) {
         MessageRef.current.value = null
 
     }
-
-    let history = useHistory()
 
     useEffect (() => {
         const requestOptions = {
@@ -83,8 +84,6 @@ export default function ChatRoom({logged_in_user}) {
     function handleTyping(){
         socket.emit('user-typing',username,logged_in_user.username)
     }
-
-
 
     return (
         <div>

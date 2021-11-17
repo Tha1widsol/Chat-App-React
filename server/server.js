@@ -7,8 +7,8 @@ io.on('connection',socket => {
         socket.broadcast.emit('user-connected',name,socket.id)
     })
     
-    socket.on('user-typing',(name,logged_in_username) => { 
-        socket.to(users[name]).emit('typing',logged_in_username)
+    socket.on('typing',(name,logged_in_username) => { 
+        socket.to(users[name]).emit('user-typing',logged_in_username)
     })
 
     socket.on('send-chat-message',(message,logged_in_username,name) => {

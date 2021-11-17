@@ -1,6 +1,7 @@
 import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
 import { useHistory,useParams } from "react-router-dom";
+import ReactScrollableFeed from 'react-scrollable-feed';
 
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
@@ -41,7 +42,7 @@ export default function ChatRoom({logged_in_user}) {
                 })
         })
 
-        socket.on('typing',name => {
+        socket.on('user-typing',name => {
             if(name !== username) return 
 
                 setTypingMessage(`${name} is typing...`)
@@ -82,7 +83,7 @@ export default function ChatRoom({logged_in_user}) {
     })
 
     function handleTyping(){
-        socket.emit('user-typing',username,logged_in_user.username)
+        socket.emit('typing',username,logged_in_user.username)
     }
 
     return (
@@ -91,20 +92,21 @@ export default function ChatRoom({logged_in_user}) {
             <p>{username}</p>
     
             <h1>Chat Log</h1>
-            <div id="chat-box">
-                {messages.map((message,index) => {
-                    return (
-                    <div key = {index}>
-                        <p>{message}</p>
-                    </div>
-                    )
-                
-                })}
+          
+                <div id="chat-box">
+                    <ReactScrollableFeed>
+                    {messages.map((message,index) => {
+                        return (
+                        <div key = {index}>
+                            <p>{message}</p>
+                        </div>
+                        )
+                    
+                    })}
+                    </ReactScrollableFeed>
+                </div>
+          
 
-            </div>
-
-    
-            
         <form onSubmit={sendMessage}>
             <input type='text' ref = {MessageRef} onKeyDown= {handleTyping}  placeholder='Message...'/>
             <button>Send</button>

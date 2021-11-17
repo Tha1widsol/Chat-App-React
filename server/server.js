@@ -15,9 +15,14 @@ io.on('connection',socket => {
             socket.to(users[name]).emit('chat-message',{message: message, name:logged_in_username})
     })
 
-    socket.on('disconnect',name => {
-       socket.broadcast.emit('user-disconnected',name)
-       delete users[name]
+    socket.on('disconnect',() => {
+       socket.broadcast.emit('user-disconnected',socket.id)
+       Object.entries(users).map(user => {
+          const [key,value] = user
+          if(value === socket.id) 
+                delete users[key]
+       })
+          
     })
 
         

@@ -27,7 +27,7 @@ export default function ChatRoom({logged_in_user}) {
        
     })
 
-    socket.on('user-disconnected',(name) => {
+    socket.on('user-disconnected',name => {
         console.log(name + ' disconnected')
     })
 

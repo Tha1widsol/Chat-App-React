@@ -8,7 +8,7 @@ const socket = io('http://localhost:3000', { transports : ['websocket'] })
 export default function ChatRoom({logged_in_user}) {
     let history = useHistory()
     
-    const {username} = useParams()
+    const {roomName} = useParams()
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
@@ -18,7 +18,7 @@ export default function ChatRoom({logged_in_user}) {
     socket.emit('new-user',logged_in_user.username)
 
     socket.on('user-connected',(name,socket) => {
-        if(name == username){
+        if(name == roomName){
             console.log(name + ' joined ' + 'id ' + socket)
         }
 
@@ -35,15 +35,15 @@ export default function ChatRoom({logged_in_user}) {
 
     useEffect (() => {
         socket.on('chat-message',data => {
-            if (data.name !== username) return
+            if (data.sender !== roomName) return
 
                 setMessages(prevState => {
-                    return [...prevState, `${data.name}: ${data.message} `]
+                    return [...prevState, `${data.sender}: ${data.message} `]
                 })
         })
 
         socket.on('user-typing',name => {
-            if(name !== username) return 
+            if(name !== roomName) return 
 
                 setTypingMessage(`${name} is typing...`)
                 setTimeout(function(){ 
@@ -61,7 +61,7 @@ export default function ChatRoom({logged_in_user}) {
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]
         })
-        socket.emit('send-chat-message',message,logged_in_user.username,username)
+        socket.emit('send-chat-message',message,logged_in_user.username,roomName)
         MessageRef.current.value = null
 
     }
@@ -71,7 +71,7 @@ export default function ChatRoom({logged_in_user}) {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
 
-        fetch('/api/get_chat/' + username,requestOptions)
+        fetch('/api/get_chat/' + roomName,requestOptions)
         
         .then((response) => {
            if (!response.ok){
@@ -83,13 +83,13 @@ export default function ChatRoom({logged_in_user}) {
     })
 
     function handleTyping(){
-        socket.emit('typing',username,logged_in_user.username)
+        socket.emit('typing',roomName,logged_in_user.username)
     }
 
     return (
         <div>
             <h2>Chat room</h2>
-            <p>{username}</p>
+            <p>{roomName}</p>
     
             <h1>Chat Log</h1>
           

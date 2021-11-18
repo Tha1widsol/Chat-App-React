@@ -84,8 +84,8 @@ class GetFriendsAPI(APIView):
         return Response(status = status.HTTP_200_OK)
 
 class GetChatAPI(APIView):
-    def get(self,request,username,*args,**kwargs):
-        user = User.objects.get(username = username)
+    def get(self,request,roomName,*args,**kwargs):
+        user = User.objects.get(username = roomName)
 
         if  user and user in request.user.friends.all() and request.user in user.friends.all():
              return Response(status = status.HTTP_200_OK)

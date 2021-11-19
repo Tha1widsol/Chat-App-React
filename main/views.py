@@ -1,7 +1,7 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import FriendRequest, User
+from .models import FriendRequest, User,Chat,ChatRoom
 from rest_framework.views import APIView
 from .serializers import *
 from knox.models import AuthToken
@@ -71,6 +71,8 @@ class AcceptFriendRequestAPI(APIView):
             friend_request.to_user.friends.add(friend_request.from_user)
             friend_request.from_user.friends.add(friend_request.to_user)
             friend_request.delete()
+            new_room = ChatRoom(name = friend_request.from_user.username)
+            new_room.save()
             return Response(status = status.HTTP_200_OK)
     
         return Response(status = status.HTTP_400_BAD_REQUEST)

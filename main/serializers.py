@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,FriendRequest
+from .models import User,FriendRequest,Chat,ChatRoom
 from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,3 +34,8 @@ class FriendRequestSerializer(serializers.Serializer):
         model = FriendRequest
         fields = '__all__'
         
+
+class ChatSerializer(serializers.Serializer):
+    class Meta:
+        model = Chat
+        fields = '__all__'

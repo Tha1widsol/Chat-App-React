@@ -38,4 +38,4 @@ class FriendRequestSerializer(serializers.Serializer):
 class ChatSerializer(serializers.Serializer):
     class Meta:
         model = Chat
-        fields = '__all__'
+        fields = ('messages')

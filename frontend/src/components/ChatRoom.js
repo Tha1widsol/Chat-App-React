@@ -40,6 +40,7 @@ export default function ChatRoom({logged_in_user}) {
                 setMessages(prevState => {
                     return [...prevState, `${data.sender}: ${data.message} `]
                 })
+
         })
 
         socket.on('user-typing',name => {
@@ -57,6 +58,18 @@ export default function ChatRoom({logged_in_user}) {
     function sendMessage(e){
         e.preventDefault()
         const message = MessageRef.current.value
+
+        const requestOptions = {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                 Authorization:`Token ${localStorage.getItem('token')}`
+            },
+        
+        };
+
+        fetch('/api/save_message/' + roomName + '/' + message,requestOptions)
+
 
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]

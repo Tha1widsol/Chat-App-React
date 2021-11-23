@@ -1,6 +1,7 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from .models import FriendRequest, User,Chat,ChatRoom
 from rest_framework.views import APIView
 from .serializers import *
@@ -88,21 +89,22 @@ class GetFriendsAPI(APIView):
 
 class SaveMessageAPI(APIView):
     def post(self,request,roomName,message,*args,**kwargs):
-        serializer = ChatSerializer(data = request.data)
-        if serializer.is_valid():
-            room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
-            chat = Chat(messages = message,sender = request.user,room = room)
-            chat.save()
-            return Response(status = status.HTTP_200_OK)   
+        room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
+        chat = Chat(messages = message,sender = request.user,room = room)
+        chat.save()
+        return Response(status = status.HTTP_200_OK)   
 
-        return Response(status = status.HTTP_400_BAD_REQUEST)       
       
 class GetChatAPI(APIView):
     def get(self,request,roomName,*args,**kwargs):
-        user = User.objects.get(username = roomName)
+        msgs = []
+        reciever = User.objects.get(username = roomName)
+        room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
+        chat = Chat.objects.filter(room = room)
+        serializer_class = ChatSerializer(chat,many = True)
 
-        if  user and user in request.user.friends.all() and request.user in user.friends.all():
-             return Response(status = status.HTTP_200_OK)
+        if reciever and reciever in request.user.friends.all() and request.user in reciever.friends.all():
+           return Response(serializer_class.data,status = status.HTTP_200_OK)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
@@ -116,9 +118,11 @@ class RemoveSentRequestAPI(APIView):
 class RemoveFriendAPI(APIView):
     def post(self,request,userID,*args,**kwargs):
         user = User.objects.get(id = userID)
+        room = ChatRoom.objects.get(Q(name__contains = user.username) & Q(name__contains = request.user.username))
         if user:
            request.user.friends.remove(user)
            user.friends.remove(request.user)
+
            return Response(status = status.HTTP_200_OK)
 
         return Response(status = status.HTTP_400_BAD_REQUEST)

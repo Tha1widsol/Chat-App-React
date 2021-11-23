@@ -28,6 +28,7 @@ export default function ChatRoom({logged_in_user}) {
        
     })
 
+  
     socket.on('user-disconnected',name => {
         console.log(name + ' disconnected')
     })
@@ -42,6 +43,21 @@ export default function ChatRoom({logged_in_user}) {
                 })
 
         })
+
+        const requestOptions = {
+            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
+        }
+
+        fetch('/api/get_chat/' + roomName,requestOptions).then((response) => 
+        response.json()
+       )
+
+       .then((data) => {
+
+        console.log(data)
+        });
+
+
 
         socket.on('user-typing',name => {
             if(name !== roomName) return 
@@ -74,26 +90,12 @@ export default function ChatRoom({logged_in_user}) {
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]
         })
+
+
         socket.emit('send-chat-message',message,logged_in_user.username,roomName)
         MessageRef.current.value = null
 
     }
-
-    useEffect (() => {
-        const requestOptions = {
-            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
-        }
-
-        fetch('/api/get_chat/' + roomName,requestOptions)
-        
-        .then((response) => {
-           if (!response.ok){
-            history.push('/')
-           }
-       });
-
-
-    })
 
     function handleTyping(){
         socket.emit('typing',roomName,logged_in_user.username)

@@ -29,10 +29,9 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials")
 
 class ChatSerializer(serializers.Serializer):
-    
-    class Meta:
-        model = ChatRoom
-        fields = ['messages','sender','room','timestamp']
+        message = serializers.CharField()
+        room = serializers.CharField()
+        sender = serializers.CharField()
 
 
 class FriendRequestSerializer(serializers.Serializer):
@@ -40,10 +39,3 @@ class FriendRequestSerializer(serializers.Serializer):
         model = FriendRequest
         fields = '__all__'
         
-
-class ChatRoomSerializer(serializers.Serializer):
-    class Meta:
-        model =ChatRoom
-        fields = ['name']
-        
-

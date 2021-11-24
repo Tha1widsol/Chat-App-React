@@ -12,7 +12,7 @@ export default function ChatRoom({logged_in_user}) {
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
-
+    const saved_messages = []
     const MessageRef = useRef()
 
     socket.emit('new-user',logged_in_user.username)
@@ -48,13 +48,25 @@ export default function ChatRoom({logged_in_user}) {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
 
-        fetch('/api/get_chat/' + roomName,requestOptions).then((response) => 
-        response.json()
-       )
+        fetch('/api/get_chat/' + roomName,requestOptions)
+        .then(response =>{  
+          return response.json()
+        })
 
-       .then((data) => {
 
-        console.log(data)
+       .then(data => {
+        data.map((obj,index) => {
+            if(obj.sender == roomName){
+                saved_messages.push(obj.sender + ": " + obj.message)
+            } 
+
+            else{
+                saved_messages.push("You: " + obj.message)
+            }
+        })
+        
+       setMessages(saved_messages)
+      
         });
 
 
@@ -77,15 +89,17 @@ export default function ChatRoom({logged_in_user}) {
 
         const requestOptions = {
             method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                 Authorization:`Token ${localStorage.getItem('token')}`
-            },
+            headers:{'Content-Type':'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
+                
+            body:JSON.stringify({
+                message : message,
+                room : roomName
+            })
         
         };
 
-        fetch('/api/save_message/' + roomName + '/' + message,requestOptions)
-
+        fetch('/api/save_message',requestOptions)
+  
 
         setMessages(prevState => {
             return [...prevState, `You: ${message}`]

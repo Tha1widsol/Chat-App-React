@@ -88,16 +88,18 @@ class GetFriendsAPI(APIView):
         return Response(status = status.HTTP_200_OK)
 
 class SaveMessageAPI(APIView):
-    def post(self,request,roomName,message,*args,**kwargs):
+    def post(self,request,*args,**kwargs):
+        message = request.data.get('message')
+        roomName = request.data.get('room')
         room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
-        chat = Chat(messages = message,sender = request.user,room = room)
+        chat = Chat(message = message,sender = request.user,room = room)
         chat.save()
+    
         return Response(status = status.HTTP_200_OK)   
 
       
 class GetChatAPI(APIView):
     def get(self,request,roomName,*args,**kwargs):
-        msgs = []
         reciever = User.objects.get(username = roomName)
         room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
         chat = Chat.objects.filter(room = room)
@@ -107,6 +109,7 @@ class GetChatAPI(APIView):
            return Response(serializer_class.data,status = status.HTTP_200_OK)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
+
 
 class RemoveSentRequestAPI(APIView):
     def post(self,request,userID,*args,**kwargs):

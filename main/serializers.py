@@ -30,7 +30,6 @@ class LoginSerializer(serializers.Serializer):
 
 class ChatSerializer(serializers.Serializer):
         message = serializers.CharField()
-        room = serializers.CharField()
         sender = serializers.CharField()
 
 

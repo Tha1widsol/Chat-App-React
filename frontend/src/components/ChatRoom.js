@@ -12,7 +12,6 @@ export default function ChatRoom({logged_in_user}) {
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
-    const saved_messages = []
     const MessageRef = useRef()
 
     socket.emit('new-user',logged_in_user.username)
@@ -39,7 +38,7 @@ export default function ChatRoom({logged_in_user}) {
             if (data.sender !== roomName) return
 
                 setMessages(prevState => {
-                    return [...prevState, `${data.sender}: ${data.message} `]
+                    return [...prevState, {message: data.message, sender: data.sender}]
                 })
 
         })
@@ -55,21 +54,11 @@ export default function ChatRoom({logged_in_user}) {
 
 
        .then(data => {
-        data.map((obj,index) => {
-            if(obj.sender == roomName){
-                saved_messages.push(obj.sender + ": " + obj.message)
-            } 
+        const savedMessages = [...data]
+        savedMessages.filter(obj => obj.sender === roomName ? obj.sender : obj.sender = "You")
+        setMessages(savedMessages)
 
-            else{
-                saved_messages.push("You: " + obj.message)
-            }
-        })
-        
-       setMessages(saved_messages)
-      
         });
-
-
 
         socket.on('user-typing',name => {
             if(name !== roomName) return 
@@ -102,7 +91,7 @@ export default function ChatRoom({logged_in_user}) {
   
 
         setMessages(prevState => {
-            return [...prevState, `You: ${message}`]
+            return [...prevState, {message: message,sender: "You"}]
         })
 
 
@@ -124,10 +113,10 @@ export default function ChatRoom({logged_in_user}) {
           
                 <div id="chat-box">
                     <ReactScrollableFeed>
-                    {messages.map((message,index) => {
+                    {messages.map((obj,index) => {
                         return (
                         <div key = {index}>
-                            <p>{message}</p>
+                            <p>{obj.sender  + ": " + obj.message}</p>
                         </div>
                         )
                     

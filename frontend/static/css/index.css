@@ -18,6 +18,9 @@ html,body{
     height:100%;
 }
 
+#seen{color:gray}
+
+
 .center {
     position: absolute;
     text-align: center;

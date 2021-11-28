@@ -12,6 +12,8 @@ export default function ChatRoom({logged_in_user}) {
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
+    const [Seen,setSeen] = useState(false)
+
     const MessageRef = useRef()
 
     socket.emit('new-user',logged_in_user.username)
@@ -23,6 +25,7 @@ export default function ChatRoom({logged_in_user}) {
 
         else{
             console.log("not connected")
+            setSeen(false)
         }
        
     })
@@ -30,15 +33,16 @@ export default function ChatRoom({logged_in_user}) {
   
     socket.on('user-disconnected',name => {
         console.log(name + ' disconnected')
+        setSeen(false)
     })
 
 
     useEffect (() => {
         socket.on('chat-message',data => {
             if (data.sender !== roomName) return
-
+          
                 setMessages(prevState => {
-                    return [...prevState, {message: data.message, sender: data.sender}]
+                    return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
                 })
 
         })
@@ -57,7 +61,6 @@ export default function ChatRoom({logged_in_user}) {
         const savedMessages = [...data]
         savedMessages.filter(obj => obj.sender === roomName ? obj.sender : obj.sender = "You")
         setMessages(savedMessages)
-
         });
 
         socket.on('user-typing',name => {
@@ -88,13 +91,23 @@ export default function ChatRoom({logged_in_user}) {
         };
 
         fetch('/api/save_message',requestOptions)
-  
+
+        socket.on('user-connected',(name) => {
+            if (name !== roomName) return
+
+            setTimeout(function(){ 
+                setSeen(true)
+            }, 700);
+    
+        })
+
+        setSeen(false)
+
 
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
         })
-
-
+  
         socket.emit('send-chat-message',message,logged_in_user.username,roomName)
         MessageRef.current.value = null
 
@@ -121,9 +134,12 @@ export default function ChatRoom({logged_in_user}) {
                         )
                     
                     })}
+                     {Seen ? <p id="seen">Seen</p> : null}
                     </ReactScrollableFeed>
+                 
                 </div>
           
+               
 
         <form onSubmit={sendMessage}>
             <input type='text' ref = {MessageRef} onKeyDown= {handleTyping}  placeholder='Message...'/>

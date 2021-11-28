@@ -31,6 +31,7 @@ class LoginSerializer(serializers.Serializer):
 class ChatSerializer(serializers.Serializer):
         message = serializers.CharField()
         sender = serializers.CharField()
+        timestamp = serializers.CharField()
 
 
 class FriendRequestSerializer(serializers.Serializer):

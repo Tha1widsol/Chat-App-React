@@ -1,13 +1,13 @@
 import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
-import Messages from './Messages';
+import Errors from './Errors';
 
 export default function RegisterPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
-    const [messages,setMessages] = useState({arr:[],type:''})
+    const [errors,setErrors] = useState([])
 
     let history = useHistory();
     
@@ -60,7 +60,7 @@ export default function RegisterPage() {
         }
 
         if (!isValid){
-            setMessages({arr:errors,type:'error'})
+            setErrors(errors)
             return
             
         }
@@ -70,11 +70,8 @@ export default function RegisterPage() {
 
 
     function HandleSubmit(e){
-        
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
-        
-
         const UserExists = 'Username is already taken'
 
         if(!validateForm(username,password)) return
@@ -105,7 +102,7 @@ export default function RegisterPage() {
         })
         
         .catch(error => {
-            setMessages({arr:[error.message],type:'error'})
+            setErrors([error.message])
 
         })
 
@@ -115,9 +112,8 @@ export default function RegisterPage() {
     return (
     
         <div>
-            
-         <Messages messages = {messages} />
-
+         <Errors errors = {errors} />
+         
         <p>Password must contain:</p>
          <li> Atleast 9 characters </li>
          <li> Atleast one number</li>

@@ -1,12 +1,11 @@
 import React,{useState,useEffect} from 'react'
-import Messages from './Messages'
+import Errors from './Errors'
 
 export default function SentPage() {
     const [users,setUsers] = useState([])
-    const [messages,setMessages] = useState({arr:[],type:''})
+    const [errors,setErrors] = useState([])
 
     useEffect(() => {
-
         const requestOptions = {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
@@ -35,7 +34,7 @@ export default function SentPage() {
                newUsers.splice(index,1)
                setUsers(newUsers)
 
-              setMessages({arr:["Friend request cancelled"],type:"success"})
+              setErrors(["Friend request cancelled"])
             }
           
         })
@@ -43,7 +42,7 @@ export default function SentPage() {
 
     return (
         <div>
-           <Messages messages = {messages} />
+           <Errors errors = {errors} />
            <h2>Sent</h2>
           {users.map(user => {
             return (

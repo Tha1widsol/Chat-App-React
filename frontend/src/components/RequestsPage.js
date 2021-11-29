@@ -1,11 +1,12 @@
 import React,{useState,useEffect} from 'react'
-import Messages from './Messages'
+import Errors from './Errors'
+
 export default function RequestsPage() {
+
     const [users,setUsers] = useState([])
-    const [messages,setMessages] = useState({arr:[],type:''})
+    const [errors,setErrors] = useState([])
 
     useEffect(() => {
-
         const requestOptions = {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
@@ -35,7 +36,7 @@ export default function RequestsPage() {
         })
 
         .then(()=> {
-            setMessages({arr:['Friend added'],type:'success'}) 
+            setErrors(['Friend added']) 
             const newUsers = [...users]
             let index = newUsers.findIndex(user => user.id == id)
             newUsers.splice(index,1)
@@ -43,14 +44,14 @@ export default function RequestsPage() {
         })
 
         .catch(error => {
-            setMessages({arr:[error.message],type:'error'})
+            setErrors([error.message])
         })
   
     }
 
     return (
         <div>
-            <Messages messages = {messages} />
+            <Errors errors = {errors} />
             <h2>Requests</h2>
 
             {users.map(user => {

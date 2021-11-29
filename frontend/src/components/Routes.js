@@ -5,9 +5,7 @@ import LoginPage from './LoginPage'
 import HomePage from './HomePage'
 import UserRoutes from './UserRoutes'
 
-
 export default function Routes({user}) {
-
     return (
         <>
             <Router>

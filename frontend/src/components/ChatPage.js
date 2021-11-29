@@ -1,15 +1,14 @@
 import React,{useState,useEffect} from 'react'
 import { useHistory } from "react-router-dom";
-import Messages from './Messages'
+import Errors from './Errors'
 
 export default function ChatPage() {
     const [users,setUsers] = useState([])
-    const [messages,setMessages] = useState({arr:[],type:''})
+    const [errors,setErrors] = useState([])
 
     let history = useHistory()
 
     useEffect(() => {
-
         const requestOptions = {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
@@ -32,11 +31,11 @@ export default function ChatPage() {
         fetch('api/remove_friend/'+ id, requestOptions)
         .then((response)=> {
             if(response.ok){
-                setMessages({arr:['Friend is removed'],type:'success'}) 
+                setErrors(['Friend is removed']) 
             }
 
             else{
-                setMessages({arr:['Something went wrong'],type:'error'}) 
+                setErrors(['Something went wrong']) 
             }
            
         })
@@ -44,7 +43,7 @@ export default function ChatPage() {
 
     return (
         <div>
-            <Messages messages = {messages} />
+            <Errors errors = {errors} />
             <h2>Chat</h2>
 
             {users.map(user => {

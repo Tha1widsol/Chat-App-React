@@ -4,7 +4,6 @@ import Navbar from "./Navbar";
 import Routes from "./Routes";
 
 export default function App(){
-
         const [user,setUser] = useState({
                 logged_in: localStorage.getItem('token') ? true : false,
                 username: ""
@@ -20,7 +19,6 @@ export default function App(){
         
                     .then(response => response.json())
                     .then(data => {
-
                         if (data.username){
                             setUser({username:data.username,logged_in:true})
                             console.log(data)
@@ -31,8 +29,6 @@ export default function App(){
                             handleLogout()
                         }
 
-                    
-                      
                     })
 
                   
@@ -50,7 +46,6 @@ export default function App(){
 
             <div>
                <Navbar user = {user} handleLogout = {handleLogout}/>
-               
                 <div className="center"><Routes user = {user}/></div>
                         
             </div>

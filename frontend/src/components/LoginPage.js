@@ -1,29 +1,24 @@
 import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
-import Messages from './Messages';
+import Errors from './Errors';
 
 export default function LoginPage() {
     const UsernameRef = useRef()
     const PasswordRef = useRef()
 
-    const [messages,setMessages] = useState({arr:[],type:''})
+    const [errors,setErrors] = useState([])
 
     let history = useHistory();
 
     function HandleSubmit(e){
-
         const username = UsernameRef.current.value
         const password = PasswordRef.current.value
-
         
         if(username.length == 0 || password.length == 0){
-            
-            setMessages(
-                {arr:["Fields cannot be empty"],type:"error"}
-             )
-             return 
-             
+            setErrors(["Fields cannot be empty"]) 
+            return 
         }
+
         const requestOptions = {
             method:'POST',
             headers:{'Content-Type':'application/json'},
@@ -51,16 +46,14 @@ export default function LoginPage() {
             
             .catch(error => {
                 PasswordRef.current.value = null
-
-                setMessages(
-                  {arr:[error.message],type:'error'} 
-                )
+                setErrors([error.message])
+              
             })
     }
 
     return (
     <div>
-       <Messages messages = {messages} />
+       <Errors errors = {errors}/>
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>
     

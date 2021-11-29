@@ -1,14 +1,13 @@
 import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
-import Messages from './Messages';
+import Errors from './Errors';
 
 export default function SearchPage({logged_in_user}) {
     const SearchRef = useRef()
 
     let history = useHistory()
 
-    const [messages,setMessages] = useState({arr:[],type:''})
-
+    const [errors,setErrors] = useState([])
     const [users,setUsers] = useState([])
 
     const searchedUsers = () => {
@@ -24,11 +23,11 @@ export default function SearchPage({logged_in_user}) {
         fetch('api/user/'+id, requestOptions)
         .then((response)=> {
             if(response.ok){
-                setMessages({arr:['Friend request sent'],type:'success'}) 
+                setErrors(['Friend request sent']) 
             }
 
             else{
-                setMessages({arr:['Friend request already sent'],type:'error'}) 
+                setErrors(['Friend request already sent']) 
             }
            
         })
@@ -52,17 +51,17 @@ export default function SearchPage({logged_in_user}) {
         .then(data => {
             if (data.length > 0){
                 setUsers(data)
-                setMessages({arr:[],type:''})
+                setErrors([])
             }
 
             else{
-                 setMessages({arr:['No users found'+ ' for' + " '" + SearchVal + " '"],type:'error'})
+                 setErrors(['No users found'+ ' for' + " '" + SearchVal + " '"])
             }
         })
     }
     return (
         <div>
-            <Messages messages = {messages} />
+            <Errors errors = {errors} />
             <h2>Search</h2>
             <form action="#" method="post">
                     <input type="search" ref={SearchRef} placeholder="Search..." id="search" autofocus = "autofocus" name="search_string" aria-label="Search" />   

@@ -85,7 +85,7 @@ export default function ChatRoom({logged_in_user}) {
                 
             body:JSON.stringify({
                 message : message,
-                room : roomName
+                roomName : roomName
             })
         
         };

@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','username','password')
+        fields = ['id','username','password']
         extra_kwargs = {'password':{'write_only':True}}
     
     def create(self,validate_data):
@@ -28,11 +28,15 @@ class LoginSerializer(serializers.Serializer):
         
         raise serializers.ValidationError("Incorrect Credentials")
 
-class ChatSerializer(serializers.Serializer):
-        message = serializers.CharField()
-        sender = serializers.CharField()
-        timestamp = serializers.CharField()
+class CreateChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['message']
 
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['message','sender','timestamp']
 
 class FriendRequestSerializer(serializers.Serializer):
     class Meta:

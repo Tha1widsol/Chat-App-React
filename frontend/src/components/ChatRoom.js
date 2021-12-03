@@ -124,7 +124,7 @@ export default function ChatRoom({logged_in_user}) {
     
             <h1>Chat Log</h1>
           
-                <div id="chat-box">
+                <div id="box">
                     <ReactScrollableFeed>
                     {messages.map((obj,index) => {
                         return (

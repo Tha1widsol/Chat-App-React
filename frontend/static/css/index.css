@@ -93,7 +93,64 @@ input{
     
 }
 
-#chat-box{
+#box{
     height:200px;
     overflow-y:auto;
+}
+
+
+#add_room{display: flex; 
+        margin:5px; 
+        position: absolute;
+}
+
+.popup{
+    position:fixed;
+    background: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 5px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    z-index: 1;
+    border-style: solid ;
+    border-width: 0.5px;
+    
+  }
+  
+  .close {
+    color: #aaaaaa;
+    position:absolute;
+    top:0;
+    right:10px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #modal-background{
+    position: fixed; 
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    z-index: 1;
+  }
+  
+#check{margin-top: 12px;}
+
+  #check-box-friends{
+    display:flex;  
 }

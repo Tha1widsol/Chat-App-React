@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 class User(AbstractUser):
     friends = models.ManyToManyField("User",blank=True)
 
@@ -11,7 +10,8 @@ class FriendRequest(models.Model):
 
 
 class ChatRoom(models.Model):
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500,blank = True)
+    members = models.TextField()
     
 class Chat(models.Model):
     message = models.TextField()

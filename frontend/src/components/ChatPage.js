@@ -4,6 +4,7 @@ import Errors from './Errors'
 
 export default function ChatPage() {
     const [users,setUsers] = useState([])
+    const [rooms,setRooms] = useState([])
     const [errors,setErrors] = useState([])
     const [popup,setPopup] = useState(false)
 
@@ -24,6 +25,19 @@ export default function ChatPage() {
        });
 
     },[users])
+
+    useEffect(() => {
+        const requestOptions = {
+            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
+        }
+
+        fetch('/api/get_rooms',requestOptions).then((response) => 
+        response.json()
+
+       ).then((data) => {
+            setRooms(data)
+       });
+    },[rooms])
 
     function handleRemoveFriend(id){
         const requestOptions = {
@@ -71,11 +85,11 @@ export default function ChatPage() {
                     </div>
                 : null}
          
-            {users.map(user => {
+            {rooms.map(room => {
             return (
             <div>
                 <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + user.username)}>{user.id}. {user.username}</p><span><button onClick = {() => handleRemoveFriend(user.id)}>Remove friend</button></span>
+                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members}</p><span><button onClick = {() => handleRemoveFriend(user.id)}>Remove friend</button></span>
                    
                 </div>
                

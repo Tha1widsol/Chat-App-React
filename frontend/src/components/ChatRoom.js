@@ -8,26 +8,36 @@ const socket = io('http://localhost:3000', { transports : ['websocket'] })
 export default function ChatRoom({logged_in_user}) {
     let history = useHistory()
     
-    const {roomName} = useParams()
+    const {roomID} = useParams()
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
     const [Seen,setSeen] = useState(false)
+    const [room,setRoom] = useState({})
 
     const MessageRef = useRef()
 
-    socket.emit('new-user',logged_in_user.username)
+    const requestOptions = {
+        headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
+    }
+
+    useEffect(() => {
+        fetch('/api/room/' + roomID,requestOptions).then((response) => 
+        response.json()
+    
+        ).then((data) => {
+            setRoom(data)
+        })
+    
+    })
+
+ 
+    if([room.members].includes(logged_in_user.username))
+        socket.emit('new-user',logged_in_user.username)
+    
 
     socket.on('user-connected',(name,socket) => {
-        if(name == roomName){
-            console.log(name + ' joined ' + 'id ' + socket)
-        }
-
-        else{
-            console.log("not connected")
-            setSeen(false)
-        }
-       
+        console.log(name + ' joined ' + 'id ' + socket)
     })
 
   
@@ -39,8 +49,6 @@ export default function ChatRoom({logged_in_user}) {
 
     useEffect (() => {
         socket.on('chat-message',data => {
-            if (data.sender !== roomName) return
-          
                 setMessages(prevState => {
                     return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
                 })
@@ -51,7 +59,7 @@ export default function ChatRoom({logged_in_user}) {
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
         }
 
-        fetch('/api/get_chat/' + roomName,requestOptions)
+        fetch('/api/get_chat/' + roomID,requestOptions)
         .then(response =>{  
           return response.json()
         })
@@ -59,12 +67,12 @@ export default function ChatRoom({logged_in_user}) {
 
        .then(data => {
         const savedMessages = [...data]
-        savedMessages.filter(obj => obj.sender === roomName ? obj.sender : obj.sender = "You")
+        savedMessages.filter(obj => obj.sender === roomID ? obj.sender : obj.sender = "You")
         setMessages(savedMessages)
         });
 
         socket.on('user-typing',name => {
-            if(name !== roomName) return 
+          
 
                 setTypingMessage(`${name} is typing...`)
                 setTimeout(function(){ 
@@ -85,7 +93,7 @@ export default function ChatRoom({logged_in_user}) {
                 
             body:JSON.stringify({
                 message : message,
-                roomName : roomName
+                roomID : roomID
             })
         
         };
@@ -93,7 +101,7 @@ export default function ChatRoom({logged_in_user}) {
         fetch('/api/save_message',requestOptions)
 
         socket.on('user-connected',(name) => {
-            if (name !== roomName) return
+        
 
             setTimeout(function(){ 
                 setSeen(true)
@@ -108,19 +116,19 @@ export default function ChatRoom({logged_in_user}) {
             return [...prevState, {message: message,sender: "You"}]
         })
   
-        socket.emit('send-chat-message',message,logged_in_user.username,roomName)
+        socket.emit('send-chat-message',message,logged_in_user.username,roomID)
         MessageRef.current.value = null
 
     }
 
     function handleTyping(){
-        socket.emit('typing',roomName,logged_in_user.username)
+        socket.emit('typing',roomID,logged_in_user.username)
     }
 
     return (
         <div>
             <h2>Chat room</h2>
-            <p>{roomName}</p>
+            <p>{roomID}</p>
     
             <h1>Chat Log</h1>
           

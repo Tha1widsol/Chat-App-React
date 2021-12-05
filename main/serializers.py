@@ -43,3 +43,7 @@ class FriendRequestSerializer(serializers.Serializer):
         model = FriendRequest
         fields = '__all__'
         
+class ChatRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatRoom
+        fields = '__all__'

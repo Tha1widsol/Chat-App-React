@@ -73,7 +73,7 @@ class AcceptFriendRequestAPI(APIView):
             friend_request.to_user.friends.add(friend_request.from_user)
             friend_request.from_user.friends.add(friend_request.to_user)
             friend_request.delete()
-            new_room = ChatRoom(name = friend_request.from_user.username + friend_request.to_user.username)
+            new_room = ChatRoom(name = friend_request.from_user.username,members = friend_request.from_user.username + " , " + friend_request.to_user.username)
             new_room.save()
             return Response(status = status.HTTP_200_OK)
     
@@ -85,7 +85,19 @@ class GetFriendsAPI(APIView):
             serializer_class = UserSerializer(request.user.friends,many = True)
             return Response(serializer_class.data,status = status.HTTP_200_OK)
             
-        return Response(status = status.HTTP_200_OK)
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
+class GetRoomsAPI(APIView):
+    def get(self,request,*args,**kwargs):
+        rooms = ChatRoom.objects.filter(members__contains = request.user.username)
+        serializer_class = ChatRoomSerializer(rooms,many = True)
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
+
+class RoomAPI(APIView):
+    def get(self,request,roomID,*args,**kwargs):
+        room = ChatRoom.objects.get(id = roomID)
+        Serializer_class = ChatRoomSerializer(room)
+        return Response(Serializer_class.data,status = status.HTTP_200_OK)
 
 class SaveMessageAPI(APIView):
     serializer_class = CreateChatSerializer
@@ -96,27 +108,22 @@ class SaveMessageAPI(APIView):
             message = serializer.data.get('message')
             roomName = request.data.get('roomName')
 
-            room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
+            room = ChatRoom.objects.get(Q(members__contains = roomName) & Q(members__contains = request.user.username))
             chat = Chat(message = message,sender = request.user,room = room)
             chat.save()
     
             return Response(status = status.HTTP_200_OK)  
 
-        print(serializer.errors)
         return Response(status = status.HTTP_400_BAD_REQUEST) 
 
       
 class GetChatAPI(APIView):
-    def get(self,request,roomName,*args,**kwargs):
-        reciever = User.objects.get(username = roomName)
-        room = ChatRoom.objects.get(Q(name__contains = roomName) & Q(name__contains = request.user.username))
+    def get(self,request,roomID,*args,**kwargs):
+        room = ChatRoom.objects.get(id = roomID)
         chat = Chat.objects.filter(room = room)
         serializer_class = ChatSerializer(chat,many = True)
-
-        if reciever and reciever in request.user.friends.all() and request.user in reciever.friends.all():
-           return Response(serializer_class.data,status = status.HTTP_200_OK)
+        return Response(serializer_class.data,status = status.HTTP_200_OK)
             
-        return Response(status = status.HTTP_400_BAD_REQUEST)
 
 
 class RemoveSentRequestAPI(APIView):
@@ -129,10 +136,11 @@ class RemoveSentRequestAPI(APIView):
 class RemoveFriendAPI(APIView):
     def post(self,request,userID,*args,**kwargs):
         user = User.objects.get(id = userID)
-        room = ChatRoom.objects.get(Q(name__contains = user.username) & Q(name__contains = request.user.username))
+      
         if user:
            request.user.friends.remove(user)
            user.friends.remove(request.user)
+      
 
            return Response(status = status.HTTP_200_OK)
 

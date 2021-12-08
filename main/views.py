@@ -73,7 +73,7 @@ class AcceptFriendRequestAPI(APIView):
             friend_request.to_user.friends.add(friend_request.from_user)
             friend_request.from_user.friends.add(friend_request.to_user)
             friend_request.delete()
-            new_room = ChatRoom(name = friend_request.from_user.username,members = friend_request.from_user.username + " , " + friend_request.to_user.username)
+            new_room = ChatRoom(name = friend_request.from_user.username,members = friend_request.from_user.username + "," + friend_request.to_user.username)
             new_room.save()
             return Response(status = status.HTTP_200_OK)
     

@@ -13,9 +13,14 @@ export default function ChatRoom({logged_in_user}) {
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
     const [Seen,setSeen] = useState(false)
+    const [members,setMembers] = useState([])
     const [room,setRoom] = useState({})
+    const [roomName,setRoomName] = useState('')
 
+  
     const MessageRef = useRef()
+
+    socket.emit('new-user',roomID)
 
     const requestOptions = {
         headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
@@ -27,28 +32,22 @@ export default function ChatRoom({logged_in_user}) {
     
         ).then((data) => {
             setRoom(data)
+            setMembers(data.members.split(","))
+            
+            if (members.length == 2){
+                const index = members.indexOf(logged_in_user.username)
+                members.splice(index,1)
+            }
+
+            setRoomName(members)
+
         })
-    
+
     })
-
- 
-    if([room.members].includes(logged_in_user.username))
-        socket.emit('new-user',logged_in_user.username)
-    
-
-    socket.on('user-connected',(name,socket) => {
-        console.log(name + ' joined ' + 'id ' + socket)
-    })
-
-  
-    socket.on('user-disconnected',name => {
-        console.log(name + ' disconnected')
-        setSeen(false)
-    })
-
 
     useEffect (() => {
         socket.on('chat-message',data => {
+                console.log(data)
                 setMessages(prevState => {
                     return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
                 })
@@ -72,8 +71,6 @@ export default function ChatRoom({logged_in_user}) {
         });
 
         socket.on('user-typing',name => {
-          
-
                 setTypingMessage(`${name} is typing...`)
                 setTimeout(function(){ 
                     setTypingMessage('')
@@ -100,17 +97,7 @@ export default function ChatRoom({logged_in_user}) {
 
         fetch('/api/save_message',requestOptions)
 
-        socket.on('user-connected',(name) => {
-        
-
-            setTimeout(function(){ 
-                setSeen(true)
-            }, 700);
-    
-        })
-
         setSeen(false)
-
 
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
@@ -128,8 +115,7 @@ export default function ChatRoom({logged_in_user}) {
     return (
         <div>
             <h2>Chat room</h2>
-            <p>{roomID}</p>
-    
+            <p>{roomName}</p>
             <h1>Chat Log</h1>
           
                 <div id="box">

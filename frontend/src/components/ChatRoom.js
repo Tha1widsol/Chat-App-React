@@ -13,7 +13,6 @@ export default function ChatRoom({logged_in_user}) {
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
     const [Seen,setSeen] = useState(false)
-    const [members,setMembers] = useState([])
     const [room,setRoom] = useState({})
     const [roomName,setRoomName] = useState('')
 
@@ -48,16 +47,17 @@ export default function ChatRoom({logged_in_user}) {
         response.json()
     
         ).then((data) => {
+
             setRoom(data)
-            setMembers(data.members.split(","))
             
-            if (members.length > 2)
+            if (data.members.split(",").length > 2)
                 setRoomName(data.name)
             
-            else{
-                const index = members.indexOf(logged_in_user.username)
-                members.splice(index,1)
-                setRoomName(members)
+            else {
+                data.members.split(",").map(name => {
+                    if (name != logged_in_user.username)
+                        setRoomName(name)
+                })
             }
 
         })
@@ -79,7 +79,7 @@ export default function ChatRoom({logged_in_user}) {
             
 
 
-    },[])
+    })
 
     
 

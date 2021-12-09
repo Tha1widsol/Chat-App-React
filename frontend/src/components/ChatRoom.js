@@ -17,7 +17,7 @@ export default function ChatRoom({logged_in_user}) {
     const [room,setRoom] = useState({})
     const [roomName,setRoomName] = useState('')
 
-  
+
     const MessageRef = useRef()
 
     socket.emit('new-user',roomID)
@@ -27,37 +27,7 @@ export default function ChatRoom({logged_in_user}) {
     }
 
     useEffect(() => {
-        fetch('/api/room/' + roomID,requestOptions).then((response) => 
-        response.json()
-    
-        ).then((data) => {
-            setRoom(data)
-            setMembers(data.members.split(","))
-            
-            if (members.length == 2){
-                const index = members.indexOf(logged_in_user.username)
-                members.splice(index,1)
-            }
-
-            setRoomName(members)
-
-        })
-
-    })
-
-    useEffect (() => {
-        socket.on('chat-message',data => {
-                console.log(data)
-                setMessages(prevState => {
-                    return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
-                })
-
-        })
-
-        const requestOptions = {
-            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
-        }
-
+      
         fetch('/api/get_chat/' + roomID,requestOptions)
         .then(response =>{  
           return response.json()
@@ -65,20 +35,57 @@ export default function ChatRoom({logged_in_user}) {
 
 
        .then(data => {
-        const savedMessages = [...data]
-        savedMessages.filter(obj => obj.sender === roomID ? obj.sender : obj.sender = "You")
-        setMessages(savedMessages)
-        });
+        data.filter(obj => obj.sender == logged_in_user.username ? obj.sender = "You" : obj.sender)
+        setMessages(data)
 
-        socket.on('user-typing',name => {
-                setTypingMessage(`${name} is typing...`)
-                setTimeout(function(){ 
-                    setTypingMessage('')
-                }, 2000);
+    })
 
+    })
+
+    useEffect (() => {
+              
+        fetch('/api/room/' + roomID,requestOptions).then((response) => 
+        response.json()
+    
+        ).then((data) => {
+            setRoom(data)
+            setMembers(data.members.split(","))
+            
+            if (members.length > 2)
+                setRoomName(data.name)
+            
+            else{
+                const index = members.indexOf(logged_in_user.username)
+                members.splice(index,1)
+                setRoomName(members)
+            }
+
+        })
+
+        socket.on('chat-message',data => {
+            setMessages(prevState => {
+                return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
             })
+    
+        })
+    
+        socket.on('user-typing',name => {
+            setTypingMessage(`${name} is typing...`)
+            setTimeout(function(){ 
+                setTypingMessage('')
+            }, 2000);
+        
+        })
+            
+
 
     },[])
+
+    
+
+
+
+
     
     function sendMessage(e){
         e.preventDefault()
@@ -96,8 +103,6 @@ export default function ChatRoom({logged_in_user}) {
         };
 
         fetch('/api/save_message',requestOptions)
-
-        setSeen(false)
 
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]

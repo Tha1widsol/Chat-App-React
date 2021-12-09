@@ -2,7 +2,7 @@ import React,{useState,useEffect,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Errors from './Errors'
 
-export default function ChatPage() {
+export default function ChatPage({logged_in_user}) {
     const [users,setUsers] = useState([])
     const [rooms,setRooms] = useState([])
     const [errors,setErrors] = useState([])
@@ -89,7 +89,7 @@ export default function ChatPage() {
             return (
             <div>
                 <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members}</p><span><button onClick = {() => handleRemoveFriend(user.id)}>Remove friend</button></span>
+                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members.split(",").length > 2 ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p><span><button onClick = {() => handleRemoveFriend(user.id)}>Remove friend</button></span>
                    
                 </div>
                

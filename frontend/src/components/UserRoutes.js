@@ -19,7 +19,7 @@ export default function UserRoutes({logged_in_user}) {
 
                 <Router>
                     <Switch>
-                        <Route exact path='/' render ={() => <ChatPage/>} />
+                        <Route exact path='/' render ={() => <ChatPage logged_in_user = {logged_in_user}/>} />
                         <Route path='/search' render={() => <SearchPage logged_in_user = {logged_in_user}/>} />
                         <Route exact path='/requests' render ={() => <RequestsPage/>} />
                         <Route exact path='/sent' render ={() => <SentPage/>} />

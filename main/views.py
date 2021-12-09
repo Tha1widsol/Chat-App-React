@@ -104,11 +104,11 @@ class SaveMessageAPI(APIView):
 
     def post(self,request,*args,**kwargs):
         serializer = self.serializer_class(data = request.data)
+
         if serializer.is_valid():
             message = serializer.data.get('message')
-            roomName = request.data.get('roomName')
-
-            room = ChatRoom.objects.get(Q(members__contains = roomName) & Q(members__contains = request.user.username))
+            roomID = request.data.get('roomID')
+            room = ChatRoom.objects.get(id = roomID)
             chat = Chat(message = message,sender = request.user,room = room)
             chat.save()
     

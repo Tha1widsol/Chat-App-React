@@ -6,7 +6,6 @@ import ReactScrollableFeed from 'react-scrollable-feed';
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
 export default function ChatRoom({logged_in_user}) {
-    let history = useHistory()
     
     const {roomID} = useParams()
 
@@ -34,10 +33,12 @@ export default function ChatRoom({logged_in_user}) {
 
 
        .then(data => {
-        data.filter(obj => obj.sender == logged_in_user.username ? obj.sender = "You" : obj.sender)
-        setMessages(data)
+        const savedMessages = [...data]
+        const newMessages = savedMessages.filter(obj => obj.sender == logged_in_user.username ? obj.sender = "You" : obj.sender)
+        setMessages(newMessages)
+        
+        })
 
-    })
 
     })
 
@@ -62,28 +63,25 @@ export default function ChatRoom({logged_in_user}) {
 
         })
 
-        socket.on('chat-message',data => {
-            setMessages(prevState => {
-                return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
-            })
-    
-        })
-    
-        socket.on('user-typing',name => {
-            setTypingMessage(`${name} is typing...`)
-            setTimeout(function(){ 
-                setTypingMessage('')
-            }, 2000);
-        
-        })
-            
 
+    },[])
+
+    
+
+    socket.on('chat-message',data => {
+        setMessages(prevState => {
+            return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
+        })
 
     })
 
+    socket.on('user-typing',name => {
+        setTypingMessage(`${name} is typing...`)
+        setTimeout(function(){ 
+            setTypingMessage('')
+        }, 2000);
     
-
-
+    })
 
 
     
@@ -102,13 +100,15 @@ export default function ChatRoom({logged_in_user}) {
         
         };
 
+     
         fetch('/api/save_message',requestOptions)
+
+        socket.emit('send-chat-message',message,logged_in_user.username,roomID)
 
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
         })
   
-        socket.emit('send-chat-message',message,logged_in_user.username,roomID)
         MessageRef.current.value = null
 
     }

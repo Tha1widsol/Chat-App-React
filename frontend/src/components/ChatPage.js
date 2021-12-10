@@ -12,10 +12,11 @@ export default function ChatPage({logged_in_user}) {
 
     let history = useHistory()
 
+    const requestOptions = {
+        headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
+    }
+
     useEffect(() => {
-        const requestOptions = {
-            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
-        }
 
         fetch('/api/get_friends',requestOptions).then((response) => 
         response.json()
@@ -27,9 +28,6 @@ export default function ChatPage({logged_in_user}) {
     },[users])
 
     useEffect(() => {
-        const requestOptions = {
-            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
-        }
 
         fetch('/api/get_rooms',requestOptions).then((response) => 
         response.json()

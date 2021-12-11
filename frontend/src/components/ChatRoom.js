@@ -14,8 +14,6 @@ export default function ChatRoom({logged_in_user}) {
     const [Seen,setSeen] = useState(false)
     const [room,setRoom] = useState({})
     const [roomName,setRoomName] = useState('')
-
-
     const MessageRef = useRef()
 
     socket.emit('new-user',roomID)
@@ -34,7 +32,7 @@ export default function ChatRoom({logged_in_user}) {
 
        .then(data => {
         const savedMessages = [...data]
-        const newMessages = savedMessages.filter(obj => obj.sender == logged_in_user.username ? obj.sender = "You" : obj.sender)
+        const newMessages = savedMessages.filter(obj => obj.sender === logged_in_user.username ? obj.sender = "You" : obj.sender)
         setMessages(newMessages)
         
         })
@@ -49,13 +47,12 @@ export default function ChatRoom({logged_in_user}) {
     
         ).then((data) => {
 
-            setRoom(data)
             
             if (data.members.split(",").length > 2)
                 setRoomName(data.name)
             
             else {
-                data.members.split(",").map(name => {
+                data.members.split(",").filter(name => {
                     if (name != logged_in_user.username)
                         setRoomName(name)
                 })
@@ -64,25 +61,28 @@ export default function ChatRoom({logged_in_user}) {
         })
 
 
+    })
+
+    
+    useEffect(() => {
+        socket.on('chat-message',data => {
+            setMessages(prevState => {
+                return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
+            })
+    
+        })
+    
+        socket.on('user-typing',name => {
+            setTypingMessage(`${name} is typing...`)
+            setTimeout(function(){ 
+                setTypingMessage('')
+            }, 2000);
+        
+        })
+    
     },[])
 
-    
-
-    socket.on('chat-message',data => {
-        setMessages(prevState => {
-            return [...prevState, {message: data.message, sender: data.sender, timestamp: data.timestamp}]
-        })
-
-    })
-
-    socket.on('user-typing',name => {
-        setTypingMessage(`${name} is typing...`)
-        setTimeout(function(){ 
-            setTypingMessage('')
-        }, 2000);
-    
-    })
-
+   
 
     
     function sendMessage(e){
@@ -100,7 +100,7 @@ export default function ChatRoom({logged_in_user}) {
         
         };
 
-     
+        
         fetch('/api/save_message',requestOptions)
 
         socket.emit('send-chat-message',message,logged_in_user.username,roomID)

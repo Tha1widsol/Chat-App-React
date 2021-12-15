@@ -3,6 +3,7 @@ const io = require('socket.io')(3000)
 io.on('connection',socket => {
     socket.on('new-user',room => {
         socket.join(room)
+        socket.to(room).emit('seen')
     })
     
     socket.on('typing',(room,sender) => { 

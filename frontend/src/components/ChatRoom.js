@@ -6,9 +6,8 @@ import ReactScrollableFeed from 'react-scrollable-feed';
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
 export default function ChatRoom({logged_in_user}) {
-    
     const {roomID} = useParams()
-
+    
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
     const [Seen,setSeen] = useState(false)
@@ -100,7 +99,15 @@ export default function ChatRoom({logged_in_user}) {
         
         };
 
+        socket.on('seen',() => {
+            setTimeout(function(){ 
+                setSeen(true)
+            }, 800);
+
+        })
         
+        setSeen(false)
+
         fetch('/api/save_message',requestOptions)
 
         socket.emit('send-chat-message',message,logged_in_user.username,roomID)

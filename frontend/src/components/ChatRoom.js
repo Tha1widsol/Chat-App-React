@@ -2,16 +2,20 @@ import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
 import { useHistory,useParams } from "react-router-dom";
 import ReactScrollableFeed from 'react-scrollable-feed';
+import Errors from './Errors';
 
 const socket = io('http://localhost:3000', { transports : ['websocket'] })
 
 export default function ChatRoom({logged_in_user}) {
     const {roomID} = useParams()
     
+    let history = useHistory();
+
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
     const [Seen,setSeen] = useState(false)
     const [room,setRoom] = useState({})
+    const [errors,setErrors] = useState([])
     const [roomName,setRoomName] = useState('')
     const MessageRef = useRef()
 
@@ -41,12 +45,14 @@ export default function ChatRoom({logged_in_user}) {
 
     useEffect (() => {
               
-        fetch('/api/room/' + roomID,requestOptions).then((response) => 
-        response.json()
-    
-        ).then((data) => {
-
+        fetch('/api/room/' + roomID,requestOptions).then(response => {
+            if(!response.ok)
+                throw Error()
             
+            return response.json()
+        })
+        
+        .then((data) => {
             if (data.members.split(",").length > 2)
                 setRoomName(data.name)
             
@@ -58,9 +64,13 @@ export default function ChatRoom({logged_in_user}) {
             }
 
         })
+        
+        .catch(()=> {
+            history.push('/')
+        })
 
 
-    })
+    },[])
 
     
     useEffect(() => {
@@ -126,6 +136,7 @@ export default function ChatRoom({logged_in_user}) {
 
     return (
         <div>
+              <Errors errors = {errors} />
             <h2>Chat room</h2>
             <p>{roomName}</p>
             <h1>Chat Log</h1>

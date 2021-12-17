@@ -16,7 +16,7 @@ path('get_rooms',views.GetRoomsAPI.as_view(),name="get_rooms"),
 path('room/<int:roomID>',views.RoomAPI.as_view(),name="room"),
 path('get_chat/<int:roomID>',views.GetChatAPI.as_view(),name="get_chat"),
 path('remove_sent/<int:userID>',views.RemoveSentRequestAPI.as_view(),name="remove_sent"),
-path('remove_friend/<int:userID>',views.RemoveFriendAPI.as_view(),name="remove_friend"),
+path('remove_friend/<int:roomID>',views.RemoveFriendAPI.as_view(),name="remove_friend"),
 path('auth/register',views.RegisterAPI.as_view()),
 path('auth/login',views.LoginAPI.as_view()),
 path('auth/logout',knox_views.LogoutView.as_view(),name='knox_logout')

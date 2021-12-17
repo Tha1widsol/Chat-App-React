@@ -87,7 +87,7 @@ export default function ChatPage({logged_in_user}) {
             return (
             <div>
                 <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members.split(",").length > 2 ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p><span><button onClick = {() => handleRemoveFriend(user.id)}>Remove friend</button></span>
+                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members.split(",").length > 2 ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p><span><button onClick = {() => handleRemoveFriend(room.id)}>Remove friend</button></span>
                    
                 </div>
                

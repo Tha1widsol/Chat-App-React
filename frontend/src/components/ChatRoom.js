@@ -34,14 +34,13 @@ export default function ChatRoom({logged_in_user}) {
 
 
        .then(data => {
-        const savedMessages = [...data]
-        const newMessages = savedMessages.filter(obj => obj.sender === logged_in_user.username ? obj.sender = "You" : obj.sender)
-        setMessages(newMessages)
-        
+        setMessages(data)
         })
+      
+
+    },[])
 
 
-    })
 
     useEffect (() => {
               
@@ -88,12 +87,11 @@ export default function ChatRoom({logged_in_user}) {
             }, 2000);
         
         })
+
     
     },[])
 
    
-
-    
     function sendMessage(e){
         e.preventDefault()
         const message = MessageRef.current.value
@@ -108,19 +106,21 @@ export default function ChatRoom({logged_in_user}) {
             })
         
         };
+      
+      
+        fetch('/api/save_message',requestOptions)
+
+        socket.emit('send-chat-message',message,logged_in_user.username,roomID)
 
         socket.on('seen',() => {
             setTimeout(function(){ 
                 setSeen(true)
             }, 800);
-
+          
+         
         })
-        
+
         setSeen(false)
-
-        fetch('/api/save_message',requestOptions)
-
-        socket.emit('send-chat-message',message,logged_in_user.username,roomID)
 
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
@@ -136,7 +136,7 @@ export default function ChatRoom({logged_in_user}) {
 
     return (
         <div>
-              <Errors errors = {errors} />
+            <Errors errors = {errors} />
             <h2>Chat room</h2>
             <p>{roomName}</p>
             <h1>Chat Log</h1>

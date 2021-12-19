@@ -124,6 +124,11 @@ class GetChatAPI(APIView):
     def get(self,request,roomID,*args,**kwargs):
         room = ChatRoom.objects.get(id = roomID)
         chat = Chat.objects.filter(room = room)
+      
+        for message in chat:
+            if message.sender == request.user.username:
+                message.sender = "You"
+
         serializer_class = ChatSerializer(chat,many = True)
         return Response(serializer_class.data,status = status.HTTP_200_OK)
             

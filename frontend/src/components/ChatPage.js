@@ -1,11 +1,13 @@
 import React,{useState,useEffect,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Errors from './Errors'
+import Success from './Success';
 
 export default function ChatPage({logged_in_user}) {
     const [users,setUsers] = useState([])
     const [rooms,setRooms] = useState([])
     const [errors,setErrors] = useState([])
+    const [success,setSuccess] = useState('')
     const [popup,setPopup] = useState(false)
 
     const MessageRef = useRef()
@@ -25,7 +27,7 @@ export default function ChatPage({logged_in_user}) {
             setUsers(data)
        });
 
-    },[users])
+    },[])
 
     useEffect(() => {
 
@@ -35,7 +37,8 @@ export default function ChatPage({logged_in_user}) {
        ).then((data) => {
             setRooms(data)
        });
-    },[rooms])
+
+    },[])
 
     function handleRemoveFriend(id){
         const requestOptions = {
@@ -46,7 +49,12 @@ export default function ChatPage({logged_in_user}) {
         fetch('api/remove_friend/'+ id, requestOptions)
         .then((response)=> {
             if(response.ok){
-                setErrors(['Friend is removed']) 
+                const newRooms = [...rooms]
+                let index = newRooms.findIndex(room => room.id === id)
+                newRooms.splice(index,1)
+                setRooms(newRooms)
+                
+                setSuccess('Friend is removed') 
             }
 
             else{
@@ -59,6 +67,8 @@ export default function ChatPage({logged_in_user}) {
     return (
         <div>
             <Errors errors = {errors} />
+            <Success success = {success}/>
+
             <button id="add_room" onClick = {() => setPopup(true)}>Add room </button>
             <h2>Chat</h2>
 

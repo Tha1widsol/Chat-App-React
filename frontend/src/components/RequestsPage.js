@@ -1,10 +1,12 @@
 import React,{useState,useEffect} from 'react'
 import Errors from './Errors'
+import Success from './Success'
 
 export default function RequestsPage() {
 
     const [users,setUsers] = useState([])
     const [errors,setErrors] = useState([])
+    const [success,setSuccess] = useState('')
 
     useEffect(() => {
         const requestOptions = {
@@ -36,7 +38,7 @@ export default function RequestsPage() {
         })
 
         .then(()=> {
-            setErrors(['Friend added']) 
+            setSuccess('Friend added') 
             const newUsers = [...users]
             let index = newUsers.findIndex(user => user.id == id)
             newUsers.splice(index,1)
@@ -51,7 +53,9 @@ export default function RequestsPage() {
 
     return (
         <div>
-            <Errors errors = {errors} />
+            <Errors errors = {errors}/>
+            <Success success = {success}/>
+
             <h2>Requests</h2>
 
             {users.map(user => {

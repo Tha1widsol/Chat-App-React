@@ -1,9 +1,11 @@
 import React,{useState,useEffect} from 'react'
 import Errors from './Errors'
+import Success from './Success'
 
 export default function SentPage() {
     const [users,setUsers] = useState([])
     const [errors,setErrors] = useState([])
+    const [success,setSuccess] = useState('')
 
     useEffect(() => {
         const requestOptions = {
@@ -34,7 +36,7 @@ export default function SentPage() {
                newUsers.splice(index,1)
                setUsers(newUsers)
 
-              setErrors(["Friend request cancelled"])
+              setSuccess("Friend request cancelled")
             }
           
         })
@@ -42,7 +44,9 @@ export default function SentPage() {
 
     return (
         <div>
-           <Errors errors = {errors} />
+          <Errors errors = {errors}/>
+          <Success success = {success}/>
+          
            <h2>Sent</h2>
           {users.map(user => {
             return (

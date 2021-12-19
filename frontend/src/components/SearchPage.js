@@ -1,6 +1,7 @@
 import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Errors from './Errors';
+import Success from './Success';
 
 export default function SearchPage({logged_in_user}) {
     const SearchRef = useRef()
@@ -8,7 +9,9 @@ export default function SearchPage({logged_in_user}) {
     let history = useHistory()
 
     const [errors,setErrors] = useState([])
+    const [success,setSuccess] = useState('')
     const [users,setUsers] = useState([])
+
 
     const searchedUsers = () => {
         return users.filter(user => user.username !== logged_in_user.username)
@@ -23,7 +26,7 @@ export default function SearchPage({logged_in_user}) {
         fetch('api/user/'+id, requestOptions)
         .then((response)=> {
             if(response.ok){
-                setErrors(['Friend request sent']) 
+                setSuccess('Friend request sent') 
             }
 
             else{
@@ -54,14 +57,15 @@ export default function SearchPage({logged_in_user}) {
                 setErrors([])
             }
 
-            else{
-                 setErrors(['No users found'+ ' for' + " '" + SearchVal + " '"])
-            }
+            else setErrors(['No users found'+ ' for' + " '" + SearchVal + " '"])
+                
         })
     }
     return (
         <div>
-            <Errors errors = {errors} />
+            <Errors errors = {errors}/>
+            <Success success = {success}/>
+
             <h2>Search</h2>
             <form action="#" method="post">
                     <input type="search" ref={SearchRef} placeholder="Search..." id="search" autofocus = "autofocus" name="search_string" aria-label="Search" />   

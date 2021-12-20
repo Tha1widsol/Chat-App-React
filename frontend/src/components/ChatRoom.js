@@ -28,10 +28,9 @@ export default function ChatRoom({logged_in_user}) {
     useEffect(() => {
       
         fetch('/api/get_chat/' + roomID,requestOptions)
-        .then(response =>{  
-          return response.json()
-        })
-
+        .then((response) =>   
+          response.json()
+        )
 
        .then(data => {
         setMessages(data)
@@ -69,7 +68,7 @@ export default function ChatRoom({logged_in_user}) {
         })
 
 
-    },[])
+    },[roomName])
 
     
     useEffect(() => {

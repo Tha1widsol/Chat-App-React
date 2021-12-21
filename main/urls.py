@@ -13,10 +13,11 @@ path('accept_friend/<int:requestID>',views.AcceptFriendRequestAPI.as_view(),name
 path('get_friends',views.GetFriendsAPI.as_view(),name="get_friends"),
 path('save_message',views.SaveMessageAPI.as_view(),name="send_message"),
 path('get_rooms',views.GetRoomsAPI.as_view(),name="get_rooms"),
+path('create_room',views.CreateRoomAPI.as_view(),name="create_room"),
 path('room/<int:roomID>',views.RoomAPI.as_view(),name="room"),
 path('get_chat/<int:roomID>',views.GetChatAPI.as_view(),name="get_chat"),
 path('remove_sent/<int:userID>',views.RemoveSentRequestAPI.as_view(),name="remove_sent"),
-path('remove_friend/<int:roomID>',views.RemoveFriendAPI.as_view(),name="remove_friend"),
+path('remove_room/<int:roomID>',views.RemoveRoomAPI.as_view(),name="remove_room"),
 path('auth/register',views.RegisterAPI.as_view()),
 path('auth/login',views.LoginAPI.as_view()),
 path('auth/logout',knox_views.LogoutView.as_view(),name='knox_logout')

@@ -9,8 +9,9 @@ export default function ChatPage({logged_in_user}) {
     const [errors,setErrors] = useState([])
     const [success,setSuccess] = useState('')
     const [popup,setPopup] = useState(false)
+    const selectedUsers = [logged_in_user.username]
 
-    const MessageRef = useRef()
+    const roomNameRef = useRef()
 
     let history = useHistory()
 
@@ -40,13 +41,13 @@ export default function ChatPage({logged_in_user}) {
 
     },[])
 
-    function handleRemoveFriend(id){
+    function handleRemoveRoom(id){
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
         };
 
-        fetch('api/remove_friend/'+ id, requestOptions)
+        fetch('api/remove_room/'+ id, requestOptions)
         .then((response)=> {
             if(response.ok){
                 const newRooms = [...rooms]
@@ -63,6 +64,42 @@ export default function ChatPage({logged_in_user}) {
            
         })
     }
+
+    function addUser(e){
+        const selected = {user: e.target.name, checked: e.target.checked}
+
+        if (selected.checked)
+          selectedUsers.push(selected.user) 
+
+        else {
+            const index = selectedUsers.indexOf(selected.user)
+            selectedUsers.splice(index,1)
+        }
+    }
+    
+    function handleCreateRoom(){
+        const roomName = roomNameRef.current.value
+
+        const requestOptions = {
+            method:'POST',
+            headers:{'Content-Type':'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
+                
+            body:JSON.stringify({
+                name : roomName,
+                members : selectedUsers.toString()
+            })
+        
+        };
+      
+        fetch('/api/create_room',requestOptions)
+
+        .then((response) => {
+            if (response.ok) {
+                history.push('/')
+            }
+        })
+
+    }
     
     return (
         <div>
@@ -75,7 +112,7 @@ export default function ChatPage({logged_in_user}) {
             {popup ? <div className = "popup"> 
                             <div className = "close" onClick = {() => setPopup(false)}>&times;</div>
                             <h1><u>Create Room</u></h1>
-                            <input type='text' ref = {MessageRef} placeholder='Room name...'/>
+                            <input type='text' ref = {roomNameRef} placeholder='Room name...'/>
                             <h2>Add friends</h2>
 
                             <div id ="box"> 
@@ -83,13 +120,15 @@ export default function ChatPage({logged_in_user}) {
                                     return (
                                         <div id="check-box-friends">
                                             <p>{user.id}. {user.username}</p>
-                                            <input type="checkbox" id="check"/>
+                                            <input type="checkbox" id="check"  name={user.username}  onChange={addUser}/>
                                         </div>
                                     )
                                 })}
                             </div>
-                           
-                            <button type="submit">Submit</button>
+
+                            <form onSubmit={handleCreateRoom}>
+                               <button type="submit">Submit</button>
+                            </form>
                     </div>
                 : null}
          
@@ -97,8 +136,7 @@ export default function ChatPage({logged_in_user}) {
             return (
             <div>
                 <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.members.split(",").length > 2 ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p><span><button onClick = {() => handleRemoveFriend(room.id)}>Remove friend</button></span>
-                   
+                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.name ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.members.split(",")[0] == logged_in_user.username || room.members.split(",").length < 3 ? <span><button onClick = {() => handleRemoveRoom(room.id)} >Remove</button></span> : null}
                 </div>
                
             </div>

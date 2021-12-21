@@ -102,6 +102,22 @@ class RoomAPI(APIView):
 
         return Response(status = status.HTTP_400_BAD_REQUEST) 
 
+class CreateRoomAPI(APIView):
+     serializer_class = ChatRoomSerializer
+
+     def post(self,request,*args,**kwargs):
+         serializer = self.serializer_class(data = request.data)
+
+         if serializer.is_valid():
+             name = serializer.data.get('name')
+             members = serializer.data.get('members')
+             room = ChatRoom(name = name,members = members)
+             room.save()
+             
+             return Response(status = status.HTTP_200_OK) 
+
+         return Response(status = status.HTTP_400_BAD_REQUEST) 
+
 class SaveMessageAPI(APIView):
     serializer_class = CreateChatSerializer
 
@@ -140,7 +156,7 @@ class RemoveSentRequestAPI(APIView):
         friend_request.delete()
         return Response(status = status.HTTP_200_OK)
 
-class RemoveFriendAPI(APIView):
+class RemoveRoomAPI(APIView):
     def post(self,request,roomID,*args,**kwargs):
         room = ChatRoom.objects.get(id = roomID)
 
@@ -148,13 +164,15 @@ class RemoveFriendAPI(APIView):
         members.remove(request.user.username)
 
         friend = User.objects.get(username = members[0])
-
+        
         if room:
-           request.user.friends.remove(friend)
-           friend.friends.remove(request.user)
-           room.delete()
+            if not(room.name):
+                request.user.friends.remove(friend)
+                friend.friends.remove(request.user)
+              
+            room.delete()
 
-           return Response(status = status.HTTP_200_OK)
+            return Response(status = status.HTTP_200_OK)
 
         return Response(status = status.HTTP_400_BAD_REQUEST)
 

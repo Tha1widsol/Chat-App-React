@@ -1,12 +1,11 @@
 from rest_framework import generics,status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
-from .models import FriendRequest, User,Chat,ChatRoom
+from .models import FriendRequest,User,Chat,ChatRoom
 from rest_framework.views import APIView
 from .serializers import *
 from knox.models import AuthToken
-from django.db.models import Q
+
 
 # Create your views here.
 
@@ -111,7 +110,8 @@ class CreateRoomAPI(APIView):
          if serializer.is_valid():
              name = serializer.data.get('name')
              members = serializer.data.get('members')
-             room = ChatRoom(name = name,members = members)
+             host = serializer.data.get('host')
+             room = ChatRoom(name = name,members = members,host = host)
              room.save()
              
              return Response(status = status.HTTP_200_OK) 

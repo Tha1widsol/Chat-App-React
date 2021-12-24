@@ -12,6 +12,7 @@ class FriendRequest(models.Model):
 class ChatRoom(models.Model):
     name = models.CharField(max_length=500,blank = True)
     members = models.TextField()
+    host = models.CharField(max_length=50,blank = True)
     
 class Chat(models.Model):
     message = models.TextField()

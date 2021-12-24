@@ -41,7 +41,7 @@ export default function ChatPage({logged_in_user}) {
 
     },[])
 
-    function handleRemoveRoom(id){
+    function handleRemoveRoom(id,name){
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
@@ -55,7 +55,9 @@ export default function ChatPage({logged_in_user}) {
                 newRooms.splice(index,1)
                 setRooms(newRooms)
                 
-                setSuccess('Friend is removed') 
+                if(!name) setSuccess('Friend is removed') 
+            
+                else setSuccess('Room is removed')
             }
 
             else{
@@ -86,7 +88,8 @@ export default function ChatPage({logged_in_user}) {
                 
             body:JSON.stringify({
                 name : roomName,
-                members : selectedUsers.toString()
+                members : selectedUsers.toString(),
+                host : logged_in_user.username
             })
         
         };
@@ -111,15 +114,15 @@ export default function ChatPage({logged_in_user}) {
 
             {popup ? <div className = "popup"> 
                             <div className = "close" onClick = {() => setPopup(false)}>&times;</div>
-                            <h1><u>Create Room</u></h1>
+                            <h1><u>Create room</u></h1>
                             <input type='text' ref = {roomNameRef} placeholder='Room name...'/>
                             <h2>Add friends</h2>
 
                             <div id ="box"> 
-                                {users.map(user => {
+                                {users.map((user,index) => {
                                     return (
                                         <div id="check-box-friends">
-                                            <p>{user.id}. {user.username}</p>
+                                            <p>{index + 1}. {user.username}</p>
                                             <input type="checkbox" id="check"  name={user.username}  onChange={addUser}/>
                                         </div>
                                     )
@@ -132,11 +135,11 @@ export default function ChatPage({logged_in_user}) {
                     </div>
                 : null}
          
-            {rooms.map(room => {
+            {rooms.map((room,index) => {
             return (
             <div>
                 <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.id}. {room.name ? room.name : room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.members.split(",")[0] == logged_in_user.username || room.members.split(",").length < 3 ? <span><button onClick = {() => handleRemoveRoom(room.id)} >Remove</button></span> : null}
+                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
                 </div>
                
             </div>

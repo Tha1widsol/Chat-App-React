@@ -51,7 +51,8 @@ export default function ChatRoom({logged_in_user}) {
         })
         
         .then((data) => {
-            if (data.members.split(",").length > 2)
+            setRoom(data)
+            if (data.name)
                 setRoomName(data.name)
             
             else {
@@ -138,6 +139,14 @@ export default function ChatRoom({logged_in_user}) {
             <Errors errors = {errors} />
             <h2>Chat room</h2>
             <p>{roomName}</p>
+            
+          {room.host ?  
+            <div>
+                <h3>Host:</h3>
+                <p>{room.host}</p>
+            </div>
+        : null}
+             
             <h1>Chat Log</h1>
           
                 <div id="box">

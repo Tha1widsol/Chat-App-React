@@ -83,23 +83,39 @@ export default function ChatPage({logged_in_user}) {
         }
 
     }
-    
-    function handleCreateRoom(e){
-        const roomName = roomNameRef.current.value
-        let errors = []
 
+   const validateForm = (roomName) => {
+        let errors = []
+        let isValid = true
+        
         if (roomName === ""){
             errors.push('Please enter a room name')
-            e.preventDefault()
+            isValid = false
+        }
+
+        if(rooms.filter(room => room.name === roomName).length > 0){
+            errors.push('Room name already exists')
+            isValid = false
         }
         
         if (selectedUsers == "") {
             errors.push('Please select at least 1 user')
-            e.preventDefault()
+            isValid = false
+        }
+        
+        if (!isValid){
+            setPopupErrors(errors)
+            return 
         }
 
-        if (errors.length > 0){
-            setPopupErrors(errors)
+        return isValid
+    }
+    
+    function handleCreateRoom(e){
+        const roomName = roomNameRef.current.value
+
+        if (!validateForm(roomName)){
+            e.preventDefault()
             return 
         }
 

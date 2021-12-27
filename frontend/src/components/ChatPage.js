@@ -9,8 +9,9 @@ export default function ChatPage({logged_in_user}) {
     const [errors,setErrors] = useState([])
     const [success,setSuccess] = useState('')
     const [popup,setPopup] = useState(false)
-    const selectedUsers = [logged_in_user.username]
-
+    const [popupErrors,setPopupErrors] = useState([])
+    const [selectedUsers,setSelectedUsers] = useState([])
+    
     const roomNameRef = useRef()
 
     let history = useHistory()
@@ -20,7 +21,6 @@ export default function ChatPage({logged_in_user}) {
     }
 
     useEffect(() => {
-
         fetch('/api/get_friends',requestOptions).then((response) => 
         response.json()
 
@@ -71,16 +71,37 @@ export default function ChatPage({logged_in_user}) {
         const selected = {user: e.target.name, checked: e.target.checked}
 
         if (selected.checked)
-          selectedUsers.push(selected.user) 
+          setSelectedUsers(prevState => {
+              return [...prevState, selected.user]
+          }) 
 
         else {
-            const index = selectedUsers.indexOf(selected.user)
-            selectedUsers.splice(index,1)
+            const newSelectedUsers = [...selectedUsers]
+            let index = newSelectedUsers.findIndex(user => user.username === selected.user)
+            newSelectedUsers.splice(index,1)
+            setSelectedUsers(newSelectedUsers)
         }
+
     }
     
-    function handleCreateRoom(){
+    function handleCreateRoom(e){
         const roomName = roomNameRef.current.value
+        let errors = []
+
+        if (roomName === ""){
+            errors.push('Please enter a room name')
+            e.preventDefault()
+        }
+        
+        if (selectedUsers == "") {
+            errors.push('Please select at least 1 user')
+            e.preventDefault()
+        }
+
+        if (errors.length > 0){
+            setPopupErrors(errors)
+            return 
+        }
 
         const requestOptions = {
             method:'POST',
@@ -88,7 +109,7 @@ export default function ChatPage({logged_in_user}) {
                 
             body:JSON.stringify({
                 name : roomName,
-                members : selectedUsers.toString(),
+                members : logged_in_user.username + "," + selectedUsers.toString(),
                 host : logged_in_user.username
             })
         
@@ -105,7 +126,7 @@ export default function ChatPage({logged_in_user}) {
     }
     
     return (
-        <div>
+        <div id = "rooms-container">
             <Errors errors = {errors} />
             <Success success = {success}/>
 
@@ -113,6 +134,7 @@ export default function ChatPage({logged_in_user}) {
             <h2>Chat</h2>
 
             {popup ? <div className = "popup"> 
+                            <Errors errors = {popupErrors} />
                             <div className = "close" onClick = {() => setPopup(false)}>&times;</div>
                             <h1><u>Create room</u></h1>
                             <input type='text' ref = {roomNameRef} placeholder='Room name...'/>

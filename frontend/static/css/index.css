@@ -45,6 +45,10 @@ html,body{
     background-color: lightgray;
 }
 
+#rooms-container{
+    overflow-y: auto;
+    height:400px;
+}
 
 #navbar a,#user-nav a {
     position: relative;
@@ -117,7 +121,7 @@ input{
     z-index: 1;
     border-style: solid ;
     border-width: 0.5px;
-    
+
   }
   
   .close {

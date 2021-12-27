@@ -19,7 +19,7 @@ export default function SentPage() {
             setUsers(data)
        });
 
-    },[users])
+    },[])
 
     function HandleUnsendFriendRequest(id){
         const requestOptions = {
@@ -37,6 +37,10 @@ export default function SentPage() {
                setUsers(newUsers)
 
               setSuccess("Friend request cancelled")
+            }
+
+            else{
+                console.log(response)
             }
           
         })

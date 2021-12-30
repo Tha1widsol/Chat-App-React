@@ -47,7 +47,7 @@ html,body{
 
 #rooms-container{
     overflow-y: auto;
-    height:400px;
+    max-height:350px;
 }
 
 #navbar a,#user-nav a {

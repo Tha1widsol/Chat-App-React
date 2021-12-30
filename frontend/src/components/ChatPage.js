@@ -2,6 +2,7 @@ import React,{useState,useEffect,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Errors from './Errors'
 import Success from './Success';
+import ReactScrollableFeed from 'react-scrollable-feed';
 
 export default function ChatPage({logged_in_user}) {
     const [users,setUsers] = useState([])
@@ -60,10 +61,8 @@ export default function ChatPage({logged_in_user}) {
                 else setSuccess('Room is removed')
             }
 
-            else{
-                setErrors(['Something went wrong']) 
-            }
-           
+            else setErrors(['Something went wrong']) 
+               
         })
     }
 
@@ -134,15 +133,15 @@ export default function ChatPage({logged_in_user}) {
         fetch('/api/create_room',requestOptions)
 
         .then((response) => {
-            if (response.ok) {
+            if (response.ok) 
                 history.push('/')
-            }
+            
         })
 
     }
     
     return (
-        <div id = "rooms-container">
+        <div>
             <Errors errors = {errors} />
             <Success success = {success}/>
 
@@ -172,18 +171,19 @@ export default function ChatPage({logged_in_user}) {
                             </form>
                     </div>
                 : null}
-         
-            {rooms.map((room,index) => {
-            return (
-            <div>
-                <div className = 'container'>
-                    <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
-                </div>
-               
+                
+            <div id = "rooms-container">
+                <ReactScrollableFeed>
+                    {rooms.map((room,index) => {
+                    return (
+                        <div className = 'container'>
+                            <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
+                        </div>
+                    )
+                })}
+                </ReactScrollableFeed>
             </div>
-          
-            )
-        })}
+
         </div>
     )
 }

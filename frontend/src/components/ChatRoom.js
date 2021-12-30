@@ -100,7 +100,16 @@ export default function ChatRoom({logged_in_user}) {
    
     function sendMessage(e){
         e.preventDefault()
+        let errors = []
         const message = MessageRef.current.value
+
+        if (message === "") {
+            errors.push('Please enter a valid message')
+            setErrors(errors)
+            return
+        }
+
+        else setErrors([])
 
         const requestOptions = {
             method:'POST',

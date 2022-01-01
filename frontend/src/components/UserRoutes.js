@@ -8,7 +8,7 @@ import SentPage from './SentPage'
 import ChatRoom from './ChatRoom'
 
 
-export default function UserRoutes({logged_in_user}) {
+export default function UserRoutes({logged_in_user,handleSetPopup}) {
     return (
         <div>
             <h2>{logged_in_user.username} </h2> 
@@ -16,10 +16,9 @@ export default function UserRoutes({logged_in_user}) {
                 <UserNav/>
                 <br/>
                 <hr className="mt-0-mb-4"/>
-
                 <Router>
                     <Switch>
-                        <Route exact path='/' render ={() => <ChatPage logged_in_user = {logged_in_user}/>} />
+                        <Route exact path={["/","/home"]} render ={() => <ChatPage logged_in_user = {logged_in_user} handleSetPopup = {handleSetPopup}/>} />
                         <Route path='/search' render={() => <SearchPage logged_in_user = {logged_in_user}/>} />
                         <Route exact path='/requests' render ={() => <RequestsPage/>} />
                         <Route exact path='/sent' render ={() => <SentPage/>} />

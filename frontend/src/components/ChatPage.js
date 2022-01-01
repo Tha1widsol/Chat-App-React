@@ -3,8 +3,9 @@ import { useHistory } from "react-router-dom";
 import Errors from './Errors'
 import Success from './Success';
 import ReactScrollableFeed from 'react-scrollable-feed';
+import { Helmet } from 'react-helmet'
 
-export default function ChatPage({logged_in_user}) {
+export default function ChatPage({logged_in_user,handleSetPopup}) {
     const [users,setUsers] = useState([])
     const [rooms,setRooms] = useState([])
     const [errors,setErrors] = useState([])
@@ -21,6 +22,8 @@ export default function ChatPage({logged_in_user}) {
         headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
     }
 
+    handleSetPopup(popup)
+    
     useEffect(() => {
         fetch('/api/get_friends',requestOptions).then((response) => 
         response.json()
@@ -142,10 +145,14 @@ export default function ChatPage({logged_in_user}) {
     
     return (
         <div>
+            <Helmet>
+                <title>Chat</title>
+            </Helmet>
+
             <Errors errors = {errors} />
             <Success success = {success}/>
 
-            <button id="add_room" onClick = {() => setPopup(true)}>Add room </button>
+            <button id = "add_room" onClick = {() => setPopup(true)}>Add room </button>
             <h2>Chat</h2>
 
             {popup ? <div className = "popup"> 
@@ -177,7 +184,7 @@ export default function ChatPage({logged_in_user}) {
                     {rooms.map((room,index) => {
                     return (
                         <div className = 'container'>
-                            <p style={{cursor:'pointer'}} onClick={() => history.push('chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
+                            <p style={{cursor:'pointer'}} onClick={() => history.push('/chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
                         </div>
                     )
                 })}

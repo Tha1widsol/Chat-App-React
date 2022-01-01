@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import Errors from './Errors'
 import Success from './Success'
+import {Helmet} from 'react-helmet'
 
 export default function SentPage() {
     const [users,setUsers] = useState([])
@@ -48,6 +49,10 @@ export default function SentPage() {
 
     return (
         <div>
+          <Helmet>
+            <title>Sent</title>
+          </Helmet>
+
           <Errors errors = {errors}/>
           <Success success = {success}/>
           

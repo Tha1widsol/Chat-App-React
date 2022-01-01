@@ -1,6 +1,7 @@
 import React,{useState,useRef} from 'react'
 import { useHistory } from "react-router-dom";
 import Errors from './Errors';
+import { Helmet } from 'react-helmet'
 
 export default function LoginPage() {
     const UsernameRef = useRef()
@@ -53,6 +54,9 @@ export default function LoginPage() {
 
     return (
     <div>
+        <Helmet>
+            <title>Login</title>
+        </Helmet>
        <Errors errors = {errors}/>
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>

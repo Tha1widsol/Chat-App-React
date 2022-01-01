@@ -5,26 +5,22 @@ import LoginPage from './LoginPage'
 import HomePage from './HomePage'
 import UserRoutes from './UserRoutes'
 
-export default function Routes({user}) {
+export default function Routes({user,handleSetPopup}) {
     return (
-        <>
+        <div>
             <Router>
                 <Switch>
-                <Route exact path={["/","/home"]} render = {() => {
-                        return user.logged_in ? null : HomePage()
+                <Route exact path={["/","home"]} render = {() => {
+                        return user.logged_in ? null : <HomePage/>
                     }}/>
-                    <Route path='/register' component={RegisterPage}></Route>
+                    <Route path='/register/' component={RegisterPage}></Route>
                     <Route path='/login/' render={() => <LoginPage/>} />
-                
                 </Switch>
-            
             </Router>
 
-            { user.logged_in ? <UserRoutes logged_in_user = {user}/> :  null}
+            { user.logged_in ? <UserRoutes logged_in_user = {user} handleSetPopup = {handleSetPopup}/> : null}
 
-    
-           
-        </>
+        </div>
 
     )
 }

@@ -8,6 +8,7 @@ export default function App(){
                 logged_in: localStorage.getItem('token') ? true : false,
                 username: ""
             })
+            const [popup,setPopup] = useState(false)
 
             useEffect(() => {
                 if(user.logged_in){
@@ -37,16 +38,20 @@ export default function App(){
                
              },[])
 
+        
+        function handleSetPopup(p){
+            setPopup(p)
+        }
+
         function handleLogout(){
                 localStorage.removeItem('token');
                 setUser({ logged_in: false, username: '' });
             }
            
         return (
-
-            <div>
+            <div id = {popup ? 'modal-background' : null}>
                <Navbar user = {user} handleLogout = {handleLogout}/>
-                <div className="center"><Routes user = {user}/></div>
+                <div className="center"><Routes user = {user} handleSetPopup = {handleSetPopup}/></div>
                         
             </div>
             

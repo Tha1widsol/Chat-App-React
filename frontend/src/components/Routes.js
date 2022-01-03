@@ -10,7 +10,7 @@ export default function Routes({user,handleSetPopup}) {
         <div>
             <Router>
                 <Switch>
-                <Route exact path={["/","home"]} render = {() => {
+                <Route exact path={["/","/home"]} render = {() => {
                         return user.logged_in ? null : <HomePage/>
                     }}/>
                     <Route path='/register/' component={RegisterPage}></Route>

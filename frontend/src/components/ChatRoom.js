@@ -137,8 +137,6 @@ export default function ChatRoom({logged_in_user}) {
 
         setSeen(false)
     
-       
-
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
         })
@@ -171,11 +169,12 @@ export default function ChatRoom({logged_in_user}) {
                     {messages.map((obj,index) => {
                         return (
                         <div key = {index}>
-                            <p>{obj.sender  + ": " + obj.message}</p>
+                            <p className = {obj.sender === "You" ? "you-message-container" : "reciever-message-container"}>{obj.sender  + ": " + obj.message}</p>
                         </div>
                         )
                     
                     })}
+                    
                      {Seen ? <p id="seen">Seen</p> : null}
                     </ReactScrollableFeed>
                  

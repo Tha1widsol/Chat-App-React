@@ -5,7 +5,7 @@ import LoginPage from './LoginPage'
 import HomePage from './HomePage'
 import UserRoutes from './UserRoutes'
 
-export default function Routes({user,handleSetPopup}) {
+export default function Routes({user}) {
     return (
         <div>
             <Router>
@@ -18,7 +18,7 @@ export default function Routes({user,handleSetPopup}) {
                 </Switch>
             </Router>
 
-            { user.logged_in ? <UserRoutes logged_in_user = {user} handleSetPopup = {handleSetPopup}/> : null}
+            { user.logged_in ? <UserRoutes logged_in_user = {user}/> : null}
 
         </div>
 

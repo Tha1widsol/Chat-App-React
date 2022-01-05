@@ -24,7 +24,7 @@ export default function SentPage() {
 
     function HandleUnsendFriendRequest(id){
         const requestOptions = {
-            method: 'POST',
+            method: 'DELETE',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
         };
 

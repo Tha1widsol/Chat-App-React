@@ -1,15 +1,15 @@
 import React,{useEffect,useState,useRef} from 'react'
 import io from 'socket.io-client';
-import { useHistory,useParams } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import ReactScrollableFeed from 'react-scrollable-feed';
 import Errors from './Errors';
 
-const socket = io('http://localhost:3000', { transports : ['websocket'] })
+const socket = io('http://localhost:4000', { transports : ['websocket'] })
 
 export default function ChatRoom({logged_in_user}) {
     const {roomID} = useParams()
     
-    let history = useHistory();
+    let navigate = useNavigate();
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
@@ -17,6 +17,7 @@ export default function ChatRoom({logged_in_user}) {
     const [room,setRoom] = useState({})
     const [errors,setErrors] = useState([])
     const [roomName,setRoomName] = useState('')
+    
     const MessageRef = useRef()
 
     socket.emit('new-user',roomID)
@@ -48,7 +49,6 @@ export default function ChatRoom({logged_in_user}) {
     })
   
     useEffect (() => {
-              
         fetch('/api/room/' + roomID,requestOptions).then(response => {
             if(!response.ok)
                 throw Error()
@@ -71,7 +71,7 @@ export default function ChatRoom({logged_in_user}) {
         })
         
         .catch(()=> {
-            history.push('/')
+            navigate('/')
         })
 
 

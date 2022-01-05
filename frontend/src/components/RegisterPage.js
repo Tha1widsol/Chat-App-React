@@ -1,16 +1,17 @@
 import React,{useState,useRef} from 'react'
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Errors from './Errors';
-import { Helmet } from 'react-helmet'
 
 export default function RegisterPage() {
+    document.title = 'Register'
+
     const UsernameRef = useRef()
     const PasswordRef = useRef()
     const ConfirmPasswordRef = useRef()
 
     const [errors,setErrors] = useState([])
 
-    let history = useHistory();
+    let navigate = useNavigate();
     
    const validateForm = (username,password) => {
         let errors = []
@@ -95,9 +96,8 @@ export default function RegisterPage() {
         })
 
         .then(data => {
-
         localStorage.setItem('token',data.token)
-        history.push('/')
+        navigate('/')
         window.location.reload(false);
             
         })
@@ -113,10 +113,6 @@ export default function RegisterPage() {
     return (
     
         <div>
-        <Helmet>
-            <title>Register</title>
-        </Helmet>
-        
          <Errors errors = {errors} />
          
         <p>Password must contain:</p>

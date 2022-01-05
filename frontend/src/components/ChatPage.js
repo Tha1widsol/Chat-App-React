@@ -1,9 +1,8 @@
 import React,{useState,useEffect,useRef} from 'react'
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Errors from './Errors'
 import Success from './Success';
 import ReactScrollableFeed from 'react-scrollable-feed';
-import { Helmet } from 'react-helmet'
 
 export default function ChatPage({logged_in_user}) {
     const [users,setUsers] = useState([])
@@ -15,9 +14,11 @@ export default function ChatPage({logged_in_user}) {
     const [popupErrors,setPopupErrors] = useState([])
     const [selectedUsers,setSelectedUsers] = useState([])
     
+    document.title = 'Chat'
+
     const roomNameRef = useRef()
 
-    let history = useHistory()
+    let navigate = useNavigate()
 
     const requestOptions = {
         headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
@@ -135,7 +136,7 @@ export default function ChatPage({logged_in_user}) {
         fetch('/api/create_room',requestOptions)
         .then((response) => {
             if (response.ok) 
-                history.push('/')
+                navigate('/')
             
         })
 
@@ -164,7 +165,7 @@ export default function ChatPage({logged_in_user}) {
         fetch('/api/edit_room/' + popupEdit.id,requestOptions)
         .then((response) => {
             if (response.ok) 
-                history.push('/')
+                navigate('/')
 
         })
 
@@ -172,10 +173,6 @@ export default function ChatPage({logged_in_user}) {
 
     return (
         <div>
-            <Helmet>
-                <title>Chat</title>
-            </Helmet>
-
             <button id = "add_room" onClick = {() => setPopupCreate(true)}>Add room </button>
             <Errors errors = {errors} />
             <Success success = {success}/>
@@ -192,7 +189,7 @@ export default function ChatPage({logged_in_user}) {
                             <div id ="box"> 
                                 {users.map((user,index) => {
                                     return (
-                                        <div id="check-box-friends">
+                                        <div id="check-box-friends" key = {index}>
                                             <p>{index + 1}. {user.username}</p>
 
                                             <input type="checkbox" id="check" name={user.username}  onChange={addUser} />
@@ -218,7 +215,7 @@ export default function ChatPage({logged_in_user}) {
                             <div id ="box"> 
                                 {users.map((user,index) => {
                                     return (
-                                        <div id="check-box-friends">
+                                        <div id="check-box-friends" key = {index}>
                                             <p>{index + 1}. {user.username}</p>  
                                            <input type="checkbox" id="check" name={user.username} onChange={addUser}/> 
                                         </div>
@@ -236,8 +233,8 @@ export default function ChatPage({logged_in_user}) {
                 <ReactScrollableFeed>
                     {rooms.map((room,index) => {
                     return (
-                        <div className = 'container'>
-                            <p style={{cursor:'pointer'}} onClick={() => history.push('/chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
+                        <div className = 'container' key = {index}>
+                            <p style={{cursor:'pointer'}} onClick={() => navigate('/chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
                             {room.host === logged_in_user.username ? <button onClick={() => setPopupEdit(room)}>Edit</button> : null}
                         </div>
                     )

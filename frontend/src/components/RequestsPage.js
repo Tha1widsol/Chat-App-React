@@ -1,9 +1,9 @@
 import React,{useState,useEffect} from 'react'
 import Errors from './Errors'
 import Success from './Success'
-import {Helmet} from 'react-helmet'
 
 export default function RequestsPage() {
+    document.title = 'Requests' 
 
     const [users,setUsers] = useState([])
     const [errors,setErrors] = useState([])
@@ -54,10 +54,6 @@ export default function RequestsPage() {
 
     return (
         <div>
-            <Helmet>
-                <title>Requests</title>
-            </Helmet>
-
             <Errors errors = {errors}/>
             <Success success = {success}/>
 

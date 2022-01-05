@@ -1,13 +1,11 @@
 import React,{useState,useRef} from 'react'
-import { useHistory } from "react-router-dom";
 import Errors from './Errors';
 import Success from './Success';
-import {Helmet} from 'react-helmet'
 
 export default function SearchPage({logged_in_user}) {
-    const SearchRef = useRef()
+    document.title = 'Search'
 
-    let history = useHistory()
+    const SearchRef = useRef()
 
     const [errors,setErrors] = useState([])
     const [success,setSuccess] = useState('')
@@ -64,10 +62,6 @@ export default function SearchPage({logged_in_user}) {
     }
     return (
         <div>
-            <Helmet>
-                <title>Search</title>
-            </Helmet>
-
             <Errors errors = {errors}/>
             <Success success = {success}/>
 

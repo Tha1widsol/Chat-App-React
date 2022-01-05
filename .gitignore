@@ -4,10 +4,11 @@ node_modules
 *.db
 *.log
 *.pot
+*.pdf
+*.docx
+*.jpg
+*.png
 *.sqlite3
-db.sqlite3
-main.js
-main.js.LICENSE.txt
 
 */*/*/__pycache__/
 

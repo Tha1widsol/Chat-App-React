@@ -1,15 +1,16 @@
 import React,{useState,useRef} from 'react'
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Errors from './Errors';
-import { Helmet } from 'react-helmet'
 
 export default function LoginPage() {
+    document.title = 'Login'
+
     const UsernameRef = useRef()
     const PasswordRef = useRef()
 
     const [errors,setErrors] = useState([])
 
-    let history = useHistory();
+    let navigate = useNavigate();
 
     function HandleSubmit(e){
         const username = UsernameRef.current.value
@@ -32,6 +33,7 @@ export default function LoginPage() {
             fetch('/api/auth/login',requestOptions)
             .then(response => {
                 if(!response.ok){
+                    console.log(response)
                     throw Error('Username or password is incorrect')
 
                 
@@ -41,8 +43,8 @@ export default function LoginPage() {
     
             .then(data => {
                 localStorage.setItem('token',data.token)
-                history.push('/')
-                window.location.reload(false);
+                navigate('/')
+                window.location.reload(false)
             })
             
             .catch(error => {
@@ -54,9 +56,6 @@ export default function LoginPage() {
 
     return (
     <div>
-        <Helmet>
-            <title>Login</title>
-        </Helmet>
        <Errors errors = {errors}/>
         <label><p>Username:</p></label>
         <input type='text' ref={UsernameRef} placeholder='Username...'/>

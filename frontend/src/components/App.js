@@ -37,21 +37,16 @@ export default function App(){
                 
                
              },[])
-
-        
-        function handleSetPopup(p){
-            setPopup(p)
-        }
-
+             
         function handleLogout(){
                 localStorage.removeItem('token');
                 setUser({ logged_in: false, username: '' });
             }
            
         return (
-            <div id = {popup ? 'modal-background' : null}>
+            <div>
                <Navbar user = {user} handleLogout = {handleLogout}/>
-                <div className="center"><Routes user = {user} handleSetPopup = {handleSetPopup}/></div>
+                <div className="center"><Routes user = {user}/></div>
                         
             </div>
             

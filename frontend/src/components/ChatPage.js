@@ -5,12 +5,13 @@ import Success from './Success';
 import ReactScrollableFeed from 'react-scrollable-feed';
 import { Helmet } from 'react-helmet'
 
-export default function ChatPage({logged_in_user,handleSetPopup}) {
+export default function ChatPage({logged_in_user}) {
     const [users,setUsers] = useState([])
     const [rooms,setRooms] = useState([])
     const [errors,setErrors] = useState([])
     const [success,setSuccess] = useState('')
-    const [popup,setPopup] = useState(false)
+    const [popupCreate,setPopupCreate] = useState(false)
+    const [popupEdit,setPopupEdit] = useState()
     const [popupErrors,setPopupErrors] = useState([])
     const [selectedUsers,setSelectedUsers] = useState([])
     
@@ -21,8 +22,6 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
     const requestOptions = {
         headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`}
     }
-
-    handleSetPopup(popup)
     
     useEffect(() => {
         fetch('/api/get_friends',requestOptions).then((response) => 
@@ -47,7 +46,7 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
 
     function handleRemoveRoom(id,name){
         const requestOptions = {
-            method: 'POST',
+            method: 'DELETE',
             headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
         };
 
@@ -89,13 +88,13 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
    const validateForm = (roomName) => {
         let errors = []
         let isValid = true
-        
+
         if (roomName === ""){
             errors.push('Please enter a room name')
             isValid = false
         }
 
-        if(rooms.filter(room => room.name === roomName).length > 0){
+        if(rooms.filter(room => room.name === roomName).length > 0 && popupCreate){
             errors.push('Room name already exists')
             isValid = false
         }
@@ -120,7 +119,7 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
             e.preventDefault()
             return 
         }
-
+    
         const requestOptions = {
             method:'POST',
             headers:{'Content-Type':'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
@@ -132,9 +131,8 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
             })
         
         };
-      
+        
         fetch('/api/create_room',requestOptions)
-
         .then((response) => {
             if (response.ok) 
                 history.push('/')
@@ -142,22 +140,51 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
         })
 
     }
+
+    function handleEditRoom(e){
+        const roomName = roomNameRef.current.value
     
+        if (!validateForm(roomName)){
+            e.preventDefault()
+            return 
+        }
+
+        const requestOptions = {
+            method:'PUT',
+            headers:{'Content-Type':'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
+           
+            body:JSON.stringify({
+                name : roomName,
+                members : logged_in_user.username + "," + selectedUsers.toString(),
+                host : logged_in_user.username
+            })
+        
+        };
+        
+        fetch('/api/edit_room/' + popupEdit.id,requestOptions)
+        .then((response) => {
+            if (response.ok) 
+                history.push('/')
+
+        })
+
+    }
+
     return (
         <div>
             <Helmet>
                 <title>Chat</title>
             </Helmet>
 
+            <button id = "add_room" onClick = {() => setPopupCreate(true)}>Add room </button>
             <Errors errors = {errors} />
             <Success success = {success}/>
 
-            <button id = "add_room" onClick = {() => setPopup(true)}>Add room </button>
             <h2>Chat</h2>
 
-            {popup ? <div className = "popup"> 
+            {popupCreate ? <div className = "popup"> 
                             <Errors errors = {popupErrors} />
-                            <div className = "close" onClick = {() => setPopup(false)}>&times;</div>
+                            <div className = "close" onClick = {() => setPopupCreate(false)}>&times;</div>
                             <h1><u>Create room</u></h1>
                             <input type='text' ref = {roomNameRef} placeholder='Room name...'/>
                             <h2>Add friends</h2>
@@ -167,7 +194,8 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
                                     return (
                                         <div id="check-box-friends">
                                             <p>{index + 1}. {user.username}</p>
-                                            <input type="checkbox" id="check"  name={user.username}  onChange={addUser}/>
+
+                                            <input type="checkbox" id="check" name={user.username}  onChange={addUser} />
                                         </div>
                                     )
                                 })}
@@ -178,13 +206,39 @@ export default function ChatPage({logged_in_user,handleSetPopup}) {
                             </form>
                     </div>
                 : null}
-                
+
+            
+            {popupEdit ? <div className = "popup"> 
+                            <Errors errors = {popupErrors} />
+                            <div className = "close" onClick = {() => setPopupEdit()}>&times;</div>
+                            <h1><u>Edit room</u></h1>
+                            <input type='text' ref = {roomNameRef} defaultValue = {popupEdit.name} placeholder='Room name...'/>
+                            <h2>Add friends</h2>
+
+                            <div id ="box"> 
+                                {users.map((user,index) => {
+                                    return (
+                                        <div id="check-box-friends">
+                                            <p>{index + 1}. {user.username}</p>  
+                                           <input type="checkbox" id="check" name={user.username} onChange={addUser}/> 
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                            <form onSubmit={handleEditRoom}>
+                               <button type="submit">Submit</button>
+                            </form>
+                    </div>
+                : null}
+
             <div id = "rooms-container">
                 <ReactScrollableFeed>
                     {rooms.map((room,index) => {
                     return (
                         <div className = 'container'>
                             <p style={{cursor:'pointer'}} onClick={() => history.push('/chat/' + room.id)}>{room.name ? index + 1 + ". " + room.name + " - " + "(" + room.members + ")" : index + 1 + ". " + room.members.split(",").filter(name => name != logged_in_user.username)}</p>{room.host === logged_in_user.username || !room.name ? <span><button onClick = {() => handleRemoveRoom(room.id,room.name)} >Remove</button></span> : null}
+                            {room.host === logged_in_user.username ? <button onClick={() => setPopupEdit(room)}>Edit</button> : null}
                         </div>
                     )
                 })}

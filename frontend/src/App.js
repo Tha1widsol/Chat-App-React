@@ -39,6 +39,12 @@ function App() {
     },[])
     
     function handleLogout(){
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', Authorization:`Token ${localStorage.getItem('token')}`},
+        };
+
+        fetch('/api/auth/logout',requestOptions)
         localStorage.removeItem('token');
         setUser({ logged_in: false, username: '' });
     }

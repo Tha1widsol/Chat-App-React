@@ -69,7 +69,7 @@ export default function ChatPage({logged_in_user}) {
         })
     }
 
-    function addUser(e){
+    function handleAddUser(e){
         const selected = {user: e.target.name, checked: e.target.checked}
 
         if (selected.checked)
@@ -192,7 +192,7 @@ export default function ChatPage({logged_in_user}) {
                                         <div id="check-box-friends" key = {index}>
                                             <p>{index + 1}. {user.username}</p>
 
-                                            <input type="checkbox" id="check" name={user.username}  onChange={addUser} />
+                                            <input type="checkbox" id="check" name={user.username}  onChange={handleAddUser} />
                                         </div>
                                     )
                                 })}
@@ -217,7 +217,7 @@ export default function ChatPage({logged_in_user}) {
                                     return (
                                         <div id="check-box-friends" key = {index}>
                                             <p>{index + 1}. {user.username}</p>  
-                                           <input type="checkbox" id="check" name={user.username} onChange={addUser}/> 
+                                           <input type="checkbox" id="check" name={user.username} onChange={handleAddUser}/> 
                                         </div>
                                     )
                                 })}

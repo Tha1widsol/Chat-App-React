@@ -100,12 +100,7 @@ class CreateRoomAPI(APIView):
          serializer = self.serializer_class(data = request.data)
 
          if serializer.is_valid():
-             name = serializer.data.get('name')
-             members = serializer.data.get('members')
-             host = serializer.data.get('host')
-             room = ChatRoom(name = name,members = members,host = host)
-             room.save()
-             
+             serializer.save()
              return Response(status = status.HTTP_200_OK) 
 
          return Response(status = status.HTTP_400_BAD_REQUEST) 

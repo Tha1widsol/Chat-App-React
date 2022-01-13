@@ -18,7 +18,6 @@ const io = new Server(server,{
 io.on('connection',socket => {
     socket.on('new-user',room => {
         socket.join(room)
-        socket.to(room).emit('seen')
     })
     
     socket.on('typing',(room,sender) => { 

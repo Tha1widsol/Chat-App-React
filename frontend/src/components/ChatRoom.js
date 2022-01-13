@@ -13,7 +13,6 @@ export default function ChatRoom({logged_in_user}) {
 
     const [messages,setMessages] = useState([])
     const [TypingMessage,setTypingMessage] = useState('')
-    const [Seen,setSeen] = useState(false)
     const [room,setRoom] = useState({})
     const [errors,setErrors] = useState([])
     const [roomName,setRoomName] = useState('')
@@ -39,14 +38,6 @@ export default function ChatRoom({logged_in_user}) {
       
 
     },[])
-   
-    useEffect (() => {
-        messages.filter((obj,index) => {
-            if (index === messages.length - 1 && obj.sender != "You"){
-                setSeen(false)
-            }
-        })
-    })
   
     useEffect (() => {
         fetch('/api/room/' + roomID,requestOptions).then(response => {
@@ -126,16 +117,6 @@ export default function ChatRoom({logged_in_user}) {
         fetch('/api/save_message',requestOptions)
 
         socket.emit('send-chat-message',message,logged_in_user.username,roomID)
- 
-        socket.on('seen',() => {
-            setTimeout(function(){ 
-                setSeen(true)
-            }, 800);
-            
-            
-        })
-
-        setSeen(false)
     
         setMessages(prevState => {
             return [...prevState, {message: message,sender: "You"}]
@@ -174,8 +155,6 @@ export default function ChatRoom({logged_in_user}) {
                         )
                     
                     })}
-                    
-                     {Seen ? <p id="seen">Seen</p> : null}
                     </ReactScrollableFeed>
                  
                 </div>

@@ -95,7 +95,7 @@ export default function ChatPage({logged_in_user}) {
             isValid = false
         }
 
-        if(rooms.filter(room => room.name === roomName).length > 0 && popupCreate){
+        if(rooms.filter(room => room.name === roomName).length > 0 && !popupEdit){
             errors.push('Room name already exists')
             isValid = false
         }

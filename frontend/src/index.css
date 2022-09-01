@@ -1,10 +1,4 @@
-html,body{
-  height: 100%;
-  margin: 0;
-  padding: 0;
- 
 
-}
 #main{
   position: fixed;
   width:100%;
@@ -46,7 +40,7 @@ html,body{
 
 #rooms-container{
   overflow-y: auto;
-  max-height:350px;
+  max-height: 350px;
 }
 
 #navbar a,#user-nav a {
@@ -92,15 +86,9 @@ input{
 }
 
 #user-container{
-  min-width: 800px;
-  min-height:530px;
-  margin-top: 50px;
-  
-}
-
-#box{
-  height:200px;
-  overflow-y:auto;
+  width: 800px;
+  height: 400px;
+  overflow-y: auto;
 }
 
 
